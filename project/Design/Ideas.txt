@@ -1,0 +1,4 @@
+Game Ideas:
+- Tik Tak Toe with extra mecanic
+- StarFox (shitty version)
+- Some Puzzle Game (Portal)
