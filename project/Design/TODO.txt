@@ -1,0 +1,7 @@
+- Rendering: Scene mit vielen(sinnvoll zusammenhängend) eigenen Objekten erstellen
+- Shadering: Mehrere Shader
+- Transformationen: Automatisierte Bewegungen
+- Kamera: Funktionen wie Zoom, Moduswechseln, ... usw. hinzufügen
+- Texturen: mehr Features bei Texturen verwenden z.B. Bumpmapping; SkyBox hinzufügen
+- Idee: Interessante Idee(siehe Exposè)
+- Weitergehende Konzepte: 
