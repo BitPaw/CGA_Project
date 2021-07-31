@@ -8,15 +8,15 @@ import cga.framework.GameWindow
 class Game(width: Int,
            height: Int,
            fullscreen: Boolean = false,
-           vsync: Boolean = false,
-           title: String = "Testgame",
+           vsync: Boolean = true,
+           title: String = "TTT",
            GLVersionMajor: Int = 3,
            GLVersionMinor: Int = 3) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 4, 120.0f) {
 
     private val scene: Scene
     init {
         setCursorVisible(false)
-        scene = Scene(this)
+        scene = SceneCycle(this)
     }
 
     override fun shutdown() = scene.cleanup()

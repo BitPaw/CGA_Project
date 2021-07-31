@@ -22,9 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff2e8567-a617-4544-8e8e-cc2634049c0d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="ff2e8567-a617-4544-8e8e-cc2634049c0d" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,6 +37,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Kotlin Interface" />
+        <option value="Kotlin Enum" />
+        <option value="Kotlin File" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -79,7 +80,18 @@
       <recent name="N:\Schule\Studium\Semester\Semester 4\[CGA] Computergrafik und Animation\Praktikum\S21\Projekt\CGA\Praktikum\D_Light\assets\shaders" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Kotlin.MainKt">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="CGA" type="JetRunConfigurationType" temporary="true">
       <option name="MAIN_CLASS_NAME" value="cga.exercise.MainKt" />
       <module name="Project.main" />
@@ -87,8 +99,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="MainKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="cga.exercise.MainKt" />
+      <module name="Program.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Kotlin.MainKt" />
         <item itemvalue="Kotlin.CGA" />
       </list>
     </recent_temporary>
@@ -127,6 +147,7 @@
       <workItem from="1625940133456" duration="100000" />
       <workItem from="1625940255469" duration="68000" />
       <workItem from="1626275187491" duration="2161000" />
+      <workItem from="1627742739673" duration="11026000" />
     </task>
     <servers />
   </component>
