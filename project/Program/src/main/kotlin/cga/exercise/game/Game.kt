@@ -16,7 +16,7 @@ class Game(width: Int,
     private val scene: Scene
     init {
         setCursorVisible(false)
-        scene = SceneCycle(this)
+        scene = SceneTTT(this)
     }
 
     override fun shutdown() = scene.cleanup()

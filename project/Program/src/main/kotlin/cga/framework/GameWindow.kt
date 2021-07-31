@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GLCapabilities
 import org.lwjgl.system.Callback
 import org.lwjgl.system.MemoryUtil
+import java.nio.IntBuffer
 
 /**
  * Created by Fabian on 16.09.2017.
@@ -122,8 +123,38 @@ abstract class GameWindow(
         GLFW.glfwSwapInterval(if (m_vsync) 1 else 0)
         GLFW.glfwShowWindow(m_window)
 
+        //ConterWindow(GLFW.glfwGetPrimaryMonitor(), m_window); // Unusable
+
         m_caps = GL.createCapabilities(true)
         if (m_msaasamples > 0) GL11.glEnable(GL13.GL_MULTISAMPLE)
+    }
+
+    private fun ConterWindow(monitorID : Long, windowID : Long)
+    {
+        val intArrayA = IntArray(10)
+        val intArrayB = IntArray(10)
+        val intArrayC = IntArray(10)
+        val intArrayD = IntArray(10)
+
+        val monitorXBuffer = IntBuffer.wrap(intArrayA)
+        val monitorYBuffer = IntBuffer.wrap(intArrayB)
+        val windowWidthBuffer =IntBuffer.wrap(intArrayC)
+        val windowHeightBuffer = IntBuffer.wrap(intArrayD)
+
+        val videoMode =  GLFW.glfwGetVideoMode(monitorID)!!
+
+        GLFW.glfwGetMonitorPos(monitorID, monitorXBuffer, monitorYBuffer);
+        GLFW.glfwGetWindowSize(windowID, windowWidthBuffer, windowHeightBuffer);
+
+        val monitorX = monitorXBuffer?.get(0)!!
+        val monitorY = monitorYBuffer?.get(0)!!
+        val windowWidth = windowWidthBuffer?.get(0)!!
+        val windowHeight = windowHeightBuffer?.get(0)!!
+
+        val x = monitorX + (videoMode.width() -  windowWidth) / 2
+        val y = monitorY + (videoMode.height() - windowHeight) / 2
+
+        GLFW.glfwSetWindowPos(monitorID,x, y)
     }
 
     private fun initializeCallbacks() {

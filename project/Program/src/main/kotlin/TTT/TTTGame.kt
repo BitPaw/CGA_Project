@@ -13,8 +13,6 @@ class TTTGame(val callback : TTTGameListener)
 
     val CurrentPlayerOnTurn = _currentPlayerOnTurn;
 
-
-
     private fun PlayerTurnChange()
     {
         _currentPlayerOnTurn = when(CurrentPlayerOnTurn)

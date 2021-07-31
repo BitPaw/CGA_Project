@@ -4,6 +4,6 @@ import cga.exercise.game.Game
 
 fun main()
 {
-    val game = Game(600, 600)
+    val game = Game(1200, 800)
     game.run()
 }
