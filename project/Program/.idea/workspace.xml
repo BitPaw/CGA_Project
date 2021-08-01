@@ -82,13 +82,15 @@
     </key>
   </component>
   <component name="RunManager" selected="Kotlin.MainKt">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -149,6 +151,7 @@
       <workItem from="1625940255469" duration="68000" />
       <workItem from="1626275187491" duration="2161000" />
       <workItem from="1627742739673" duration="20182000" />
+      <workItem from="1627826149655" duration="3181000" />
     </task>
     <servers />
   </component>
@@ -170,6 +173,7 @@
   <component name="VcsManagerConfiguration">
     <ignored-roots>
       <path value="$PROJECT_DIR$/../.." />
+      <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
   </component>
   <component name="XDebuggerManager">

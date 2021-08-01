@@ -24,6 +24,8 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     private var ibo = 0
     private var indexcount = 0
 
+    var RenderMode = GL33C.GL_TRIANGLES
+
     init {
         indexcount = index.size
 
@@ -71,14 +73,9 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
      */
     fun render(shaderProgram: ShaderProgram)
     {
-        var drawMode = GL33C.GL_TRIANGLES
-
-        //drawMode = GL33C.GL_LINE_LOOP
-       // GL33C.glLineWidth(10f);
-
         GL33C.glBindVertexArray(vao)
         material?.bind(shaderProgram)
-        GL33C.glDrawElements(drawMode, indexcount, GL33C.GL_UNSIGNED_INT, 0)
+        GL33C.glDrawElements(RenderMode, indexcount, GL33C.GL_UNSIGNED_INT, 0)
         GL33C.glBindVertexArray(0)
     }
 

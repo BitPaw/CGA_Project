@@ -3,8 +3,9 @@
 //input from vertex shader
 in struct VertexData
 {
-    vec3 position;
-    vec3 normal;
+    vec3 Position;
+    vec2 TexturePosition;
+    vec3 Normal;
 } vertexData;
 
 //fragment shader output
@@ -14,9 +15,9 @@ uniform vec3 materialColor;
 
 void main()
 {
-    float red =  abs(vertexData.normal.x);
-    float green =  abs(vertexData.normal.y);
-    float blue = abs(vertexData.normal.z);
+    float red =  abs(vertexData.Normal.x);
+    float green =  abs(vertexData.Normal.y);
+    float blue = abs(vertexData.Normal.z);
 
     vec3 mixedColor = materialColor * vec3(red, green, blue);
 
