@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL33C
  *
  * Created by Fabian on 16.09.2017.
  */
-class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, val material: Material? = null)
+class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, var material: Material = Material())
 {
     private var data = vertexdata;
     private var index = indexdata;

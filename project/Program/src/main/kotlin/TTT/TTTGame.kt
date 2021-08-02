@@ -9,13 +9,11 @@ class TTTGame(val callback : TTTGameListener)
     private val _playerX = Player(PlayerSymbol.X)
     private val _playerO = Player(PlayerSymbol.O)
 
-    private var _currentPlayerOnTurn = PlayerSymbol.X
-
-    val CurrentPlayerOnTurn = _currentPlayerOnTurn;
+    var CurrentPlayerOnTurn = PlayerSymbol.X
 
     private fun PlayerTurnChange()
     {
-        _currentPlayerOnTurn = when(CurrentPlayerOnTurn)
+        CurrentPlayerOnTurn = when(CurrentPlayerOnTurn)
         {
             PlayerSymbol.X ->  PlayerSymbol.O
             PlayerSymbol.O ->  PlayerSymbol.X
@@ -42,10 +40,9 @@ class TTTGame(val callback : TTTGameListener)
         callback.OnMatchBegin(width, height)
     }
 
-    fun PlayerPlace(playerSymbol : PlayerSymbol, strength : Int, x : Int, y : Int) : PlayerPlaceResult
+    fun PlayerPlace(gameField: GameField) : PlayerPlaceResult
     {
-        val placeable = Placeable(playerSymbol, strength)
-        val isHisTurn = CurrentPlayerOnTurn == playerSymbol
+        val isHisTurn = CurrentPlayerOnTurn == gameField.Symbol
         val playerPlaceResult : PlayerPlaceResult
 
         if(!isHisTurn)
@@ -54,7 +51,7 @@ class TTTGame(val callback : TTTGameListener)
         }
         else
         {
-            val isInField = _gameField.IsInField(x, y)
+            val isInField = _gameField.IsInField(gameField.x, gameField.x)
 
             if(!isInField)
             {
@@ -62,14 +59,14 @@ class TTTGame(val callback : TTTGameListener)
             }
             else
             {
-                val containedInField = _gameField.Get(x, y)
+                val containedInField = _gameField.Get(gameField.x, gameField.y)
                 val hasSomethingOnField = containedInField != null
 
                 if(hasSomethingOnField)
                 {
                     // There is already something, check it
                     val fieldStrength = containedInField!!.Strength
-                    val isStronger = fieldStrength< strength
+                    val isStronger = fieldStrength < gameField.Strength
                     val canPlayerUseIt = CanPlayerUseNumber(fieldStrength)
 
                     if(!canPlayerUseIt)
@@ -99,7 +96,7 @@ class TTTGame(val callback : TTTGameListener)
 
 
             //-----<Trigger Event Player Interact>----------
-            val event = PlayerPlaceEvent(playerSymbol, playerPlaceResult, placeable)
+            val event = PlayerPlaceEvent(gameField, playerPlaceResult)
 
             callback.OnPlayerInteract(event)
             //-----------------------------------------------
@@ -107,9 +104,9 @@ class TTTGame(val callback : TTTGameListener)
             //------<Trigger Placement>---------------------
             if(playerPlaceResult == PlayerPlaceResult.Successful || playerPlaceResult == PlayerPlaceResult.SuccessfulOverride)
             {
-                _gameField.Set(x, y, placeable)
+                _gameField.Set(gameField)
 
-                callback.OnPlayerPlace(placeable)
+                callback.OnPlayerPlace(gameField)
 
                 PlayerTurnChange()
             }

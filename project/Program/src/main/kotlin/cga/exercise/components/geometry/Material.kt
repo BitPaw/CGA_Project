@@ -6,9 +6,9 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL33C
 
-class Material(var diff: Texture2D,
-               var emit: Texture2D,
-               var specular: Texture2D,
+class Material(var emit: Texture2D? = null,
+               var diff: Texture2D? = null,
+               var specular: Texture2D? = null,
                var shininess: Float = 50.0f,
                var tcMultiplier : Vector2f = Vector2f(1.0f),
                 val color : Vector3f = Vector3f(1f,1f,1f)
@@ -19,9 +19,9 @@ class Material(var diff: Texture2D,
     fun bind(shaderProgram: ShaderProgram)
     {
 
-        if(emit.texID > 0)
+        if(emit!!.texID >= 0)
         {
-            emit.bind(0)
+            emit!!.bind(0)
         }
 
 

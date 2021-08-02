@@ -12,5 +12,5 @@ interface TTTGameListener
     // Player
     fun OnPlayerInteract(playerPlaceEvent : PlayerPlaceEvent)
     fun OnPlayerTurnChangeEvent(playerTurnChangeEvent : PlayerTurnChangeEvent)
-    fun OnPlayerPlace(placeable: Placeable)
+    fun OnPlayerPlace(gameField: GameField)
 }

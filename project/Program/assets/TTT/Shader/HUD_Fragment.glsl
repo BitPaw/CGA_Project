@@ -5,7 +5,6 @@ in struct VertexData
 {
     vec3 Position;
     vec2 TexturePosition;
-    vec3 Normal;
 } vertexData;
 
 //fragment shader output
@@ -16,11 +15,12 @@ uniform sampler2D textureEmissive;
 
 void main()
 {
-    // vec3 mixedColor = materialColor * vertexData.Normal;
+    vec4 recolor = texture(textureEmissive, vertexData.TexturePosition);
 
-    vec4 texture = vec4(30f,30f,30f, 1f) * texture(textureEmissive, vertexData.TexturePosition);
+    if(recolor.xyz == vec3(175/255f, 0f, 1f))
+    {
+        discard;
+    }
 
-    //vec4 mixedColorX4 = mix(texture, vec4(mixedColor, 1.0f), 0.2f) * 5f;
-
-    ResultColor = texture;
+    ResultColor = recolor;
 }

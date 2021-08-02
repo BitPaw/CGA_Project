@@ -56,14 +56,15 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         texID = GL33C.glGenTextures()
         GL33C.glBindTexture(mode, texID);
 
-        GL33C.glTexImage2D(mode, 0, GL33C.GL_RGBA, width, height, 0, GL33C.GL_RGBA, GL33C.GL_BYTE, imageData);
+        GL33C.glTexImage2D(mode, 0, GL33C.GL_RGBA, width, height, 0, GL33C.GL_RGBA, GL33C.GL_UNSIGNED_BYTE, imageData);
+
+        setTexParams(GL33C.GL_CLAMP_TO_BORDER, GL33C.GL_CLAMP_TO_EDGE, GL33C.GL_NEAREST , GL33C.GL_NEAREST)
 
         if(genMipMaps)
         {
             GL33C.glGenerateMipmap(mode)
         }
 
-        setTexParams(GL33C.GL_REPEAT, GL33C. GL_REPEAT, GL33C.GL_LINEAR_MIPMAP_LINEAR , GL33C.GL_LINEAR)
     }
 
     override fun setTexParams(wrapS: Int, wrapT: Int, minFilter: Int, magFilter: Int)
@@ -78,7 +79,9 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         GL33C.glTexParameteri(mode, GL33C.GL_TEXTURE_MIN_FILTER, minFilter);
         GL33C.glTexParameteri(mode, GL33C.GL_TEXTURE_MAG_FILTER, magFilter);
 
-        GL33C.glTexParameterf(GL33C.GL_TEXTURE_2D,EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,16.0f)
+       // GL33C.glTexParameterf(GL33C.GL_TEXTURE_2D,EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,16.0f)
+
+
 
         GL33C.glBindTexture(mode, 0)
     }

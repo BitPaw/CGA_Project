@@ -22,6 +22,38 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
     {
         modelMatrix.rotateXYZ(rotation.x, rotation.y, rotation.z)
     }
+    fun rotateLocalCappedYZ(pitch: Float, yaw: Float, roll: Float)
+    {
+        val maxY = 90f
+        val maxZ = 90f
+        val pitchCurrent = getXAxis()
+        val yawCurrent = getYAxis()
+        val rollCurrent = getZAxis()
+
+        // TEST
+        rotateLocal(pitch, yaw, roll)
+
+        // ToDo Cap rotation
+        /*
+        if(view.y > 89)
+        {
+            view.y = 89;
+        }
+        if(view.y < -89)
+        {
+            view.y = -89;
+        }
+        if(view.z > 89)
+        {
+            view.z = 89;
+        }
+        if(view.z < -89)
+        {
+            view.z = -89;
+        }*/
+
+
+    }
 
 
     /**

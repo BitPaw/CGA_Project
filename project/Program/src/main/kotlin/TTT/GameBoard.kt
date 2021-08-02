@@ -2,7 +2,7 @@ package TTT
 
 class GameBoard(width: Int = 3, height : Int = 3, private val target : Int = minOf(width,height))
 {
-    val field = Array(width) {Array(height) { Placeable() } }
+    val field = Array(width) {Array(height) { GameField(-1, -1) } }
 
     fun Setup(width: Int, height: Int)
     {
@@ -14,13 +14,13 @@ class GameBoard(width: Int = 3, height : Int = 3, private val target : Int = min
         return true
     }
 
-    fun Get(x : Int, y : Int) : Placeable?
+    fun Get(x : Int, y : Int) : GameField?
     {
 
         return null
     }
 
-    fun Set(x : Int, y : Int, placeable : Placeable)
+    fun Set(gameField: GameField)
     {
 
     }
@@ -38,7 +38,7 @@ class GameBoard(width: Int = 3, height : Int = 3, private val target : Int = min
                 if(field[i][j].Symbol != PlayerSymbol.None)
                 {
                     val symbol = field[i][j].Symbol
-                    winningPositions.add(GameField(i,j,field[i][j]))
+                    winningPositions.add(field[i][j])
                     for(combination in 1 until 4)
                     {
                         winning=true

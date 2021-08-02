@@ -14,7 +14,6 @@ out struct VertexData
 {
     vec3 Position;
     vec2 TexturePosition;
-    vec3 Normal;
 } vertexData;
 
 uniform vec2 textureScaling;
@@ -28,5 +27,4 @@ void main()
 
     vertexData.Position = pos.xyz;
     vertexData.TexturePosition = texture * textureScaling;
-    vertexData.Normal  = vec3(inverse(transpose(view_matrix * model_matrix)) * vec4(normal, 1.0f));
 }

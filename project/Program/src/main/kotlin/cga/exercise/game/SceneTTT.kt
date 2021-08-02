@@ -1,21 +1,19 @@
 package cga.exercise.game
 
 import Resource.Skybox
+import TTT.*
 import TTT.Event.GameStateChangeEvent
 import TTT.Event.MatchEndEvent
 import TTT.Event.PlayerPlaceEvent
 import TTT.Event.PlayerTurnChangeEvent
-import TTT.Placeable
-import TTT.TTTGame
-import TTT.TTTGameListener
 import cga.exercise.components.camera.TTTCamera
+import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
-import org.joml.Math
 import org.joml.Math.toRadians
 import org.joml.Vector2d
 import org.joml.Vector2f
@@ -33,13 +31,17 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val shaderWorld: ShaderProgram = ShaderProgram("assets/TTT/Shader/WorldShader_Vertex.glsl", "assets/TTT/Shader/WorldShader_Fragment.glsl")
 
     private val cube =  ModelLoader.loadModel("assets/TTT/Model/Cube.obj", 0f, toRadians(0f),0f)!!;
-    private val rectangle  =ModelLoader.loadModel("assets/TTT/Model/Recangle.obj", 0f, toRadians(0f),0f)!!;
+    private val rectangle = ModelLoader.loadModel("assets/TTT/Model/Recangle.obj", 0f, toRadians(0f),0f)!!;
 
     // Actual, Scene
     private val fieldList = mutableListOf<Renderable>()
 
     private val missingTexture =  Texture2D("assets/TTT/Texture/MissingTexture.png", true)
-    private val brickTexture = Texture2D("assets/TTT/Texture/X.png", true)
+    private val brickTexture = Texture2D("assets/TTT/Texture/Brick.png", true)
+    private val playerX = Texture2D("assets/TTT/Texture/X.png", true)
+    private val playerO = Texture2D("assets/TTT/Texture/O.png", true)
+
+    private val _cross = Renderable(rectangle.MeshList)
 
     private val _skybox = Skybox(
         "assets/TTT/Shader/SkyBox_Vertex.glsl",
@@ -74,7 +76,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         rectangle.translateLocal(Vector3f(-1f, -1f, -1f))
         rectangle.scaleLocal(0.3f);
         //rectangle.meshList[0].RenderMode = GL33C.GL_QUADS
-        rectangle.meshList[0].material?.emit = brickTexture
+        rectangle.MeshList[0].material?.emit = Texture2D("assets/TTT/Texture/X.png", true)
 
         _camera.translateGlobal(Vector3f(0f, 3f, 6f))
         _camera.rotateLocal(toRadians(-35f), 0f, 0f)
@@ -82,6 +84,10 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         //cube.translateLocal(0.5f,0.5f,0.5f)
         _skybox.Cube?.scaleLocal(100f);
 
+
+        _cross.MeshList[0].material?.emit = Texture2D("assets/TTT/Texture/Cross.png", true)
+        _cross.scaleLocal(00.1f)
+        _cross.translateLocal(-0.5f, -0.5f, -2f)
     }
 
     //-----<Engine internal>--------------------------------------------------------------------------------------------
@@ -94,6 +100,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         GL33C.glDepthMask(false)
         GL11.glFrontFace(GL11.GL_CW)
         _skybox.Shader.use()
+        _camera.ThirdDimension = true;
         //_camera.IgnoreTranslation = true
         _camera.bind(_skybox.Shader)
         _skybox.Texture.bind(0)
@@ -114,11 +121,12 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         //--------------------------------------------------------------------------------------------------------------
 
         //-----<HUD>----------------------------------------------------------------------------------------------------
-        //shaderHUD.use()
-        //_camera.ThirdDimension = false;
-        //_camera.IgnoreTranslation = true
-        //_camera.bind(shaderHUD)
-        //rectangle.render(shaderHUD)
+        shaderHUD.use()
+        _camera.ThirdDimension = false
+        _camera.IgnoreTranslation = true
+        _camera.bind(shaderHUD)
+        rectangle.render(shaderHUD)
+        _cross.render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
     }
 
@@ -169,6 +177,83 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
            // _camera.rotateLocal(roationVector)
             _camera.translateGlobal(movementVector)
         }
+
+
+
+        val gamefield = HandleFieldInput()
+
+
+
+
+    }
+
+    fun HandleFieldInput()
+    {
+        val field1 = window.getKeyState(GLFW.GLFW_KEY_KP_1)
+        val field2 = window.getKeyState(GLFW.GLFW_KEY_KP_2)
+        val field3 = window.getKeyState(GLFW.GLFW_KEY_KP_3)
+        val field4 = window.getKeyState(GLFW.GLFW_KEY_KP_4)
+        val field5 = window.getKeyState(GLFW.GLFW_KEY_KP_5)
+        val field6 = window.getKeyState(GLFW.GLFW_KEY_KP_6)
+        val field7 = window.getKeyState(GLFW.GLFW_KEY_KP_7)
+        val field8 = window.getKeyState(GLFW.GLFW_KEY_KP_8)
+        val field9 = window.getKeyState(GLFW.GLFW_KEY_KP_9)
+
+        var x = -1
+        var y = -1
+
+        if(field1)
+        {
+            x = 0
+            y = 0
+        }
+        else if(field2)
+        {
+            x = 1
+            y = 0
+        }
+        else if(field3)
+        {
+            x = 2
+            y = 0
+        }
+        else if(field4)
+        {
+            x = 0
+            y = 1
+        }
+        else if(field5)
+        {
+            x = 1
+            y = 1
+        }
+        else if(field6)
+        {
+            x = 2
+            y = 1
+        }
+        else if(field7)
+        {
+            x = 0
+            y = 2
+        }
+        else if(field8)
+        {
+            x = 1
+            y = 2
+        }
+        else if(field9)
+        {
+            x = 2
+            y = 2
+        }
+
+        if(x != -1 && y != -1)
+        {
+            val gameField = GameField(x, y, _game.CurrentPlayerOnTurn, 10)
+
+            _game.PlayerPlace(gameField)
+        }
     }
 
     override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
@@ -188,14 +273,11 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         mousePositionCurrent.set(newPos)
 
-
         val viewMoveVector = Vector2f(mousePositionDelta.x.toFloat(), mousePositionDelta.y.toFloat())
 
-        viewMoveVector.mul(0.005f)
+        viewMoveVector.mul(-0.005f)
 
-        _camera.rotateLocal(-viewMoveVector.y, -viewMoveVector.x, 0f)
-
-        //println("Mouse pos ${mousePositionDelta.x} - ${mousePositionDelta.y}")
+        _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
     }
 
     override fun cleanup()
@@ -222,19 +304,20 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         println("<Event: Match begin> Width:$width Height:$height")
 
         //-----<Build Field>--------------------------------------------------------------------------------------------
-        val gapBetween = 1.5f
+        val gapBetween = 2.5f
         val offset = Vector3f(width/2f, 0f, height/2f)
 
         for (y in 0 until height)
         {
             for (x in 0 until width)
             {
-                val newObject = Renderable(cube.meshList)
+                val newObject = Renderable(cube.MeshList)
                 val newPosition = Vector3f(x.toFloat() * gapBetween - offset.x, 0f, y.toFloat() * gapBetween - offset.y)
 
                 newObject.translateLocal(newPosition)
 
-                newObject.meshList.forEach{element -> element.material?.emit = brickTexture}
+
+                newObject.MeshList.forEach{element ->  element.material = Material(brickTexture) }
 
                 fieldList.add(newObject)
             }
@@ -242,19 +325,42 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         //------------------------------------------------------------------------------------------------------------------
     }
 
+    private fun SetBlockOwnerShip(gameField: GameField)
+    {
+        val index = gameField.x + (gameField.y + 2)
+
+        val texture = when(gameField.Symbol)
+        {
+            PlayerSymbol.None -> throw Exception()
+            PlayerSymbol.X -> playerX
+            PlayerSymbol.O -> playerO
+        }
+
+        fieldList[index].MeshList[0].material?.emit = texture
+    }
+
     override fun OnPlayerInteract(playerPlaceEvent: PlayerPlaceEvent)
     {
-        TODO("Not yet implemented")
+        when(playerPlaceEvent.result)
+        {
+            PlayerPlaceResult.InvalidAction -> TODO()
+            PlayerPlaceResult.Successful -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.SuccessfulOverride -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.NotYourTurn -> TODO()
+            PlayerPlaceResult.NotInField -> TODO()
+            PlayerPlaceResult.Occupied -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.AlreadyUsed -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+        }
     }
 
     override fun OnPlayerTurnChangeEvent(playerTurnChangeEvent: PlayerTurnChangeEvent)
     {
-        TODO("Not yet implemented")
+
     }
 
-    override fun OnPlayerPlace(placeable: Placeable)
+    override fun OnPlayerPlace(gameField: GameField)
     {
-        TODO("Not yet implemented")
+
     }
 
     //------------------------------------------------------------------------------------------------------------------

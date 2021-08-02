@@ -151,7 +151,7 @@
       <workItem from="1627742739673" duration="20182000" />
       <workItem from="1627826149655" duration="3181000" />
       <workItem from="1627896527800" duration="3252000" />
-      <workItem from="1627901025610" duration="12270000" />
+      <workItem from="1627901025610" duration="24454000" />
     </task>
     <servers />
   </component>
@@ -177,10 +177,19 @@
     </ignored-roots>
   </component>
   <component name="XDebuggerManager">
-    <pin-to-top-manager>
-      <pinned-members>
-        <PinnedItemInfo parentTag="cga.exercise.components.geometry.Material" memberName="emit" />
-      </pinned-members>
-    </pin-to-top-manager>
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/cga/exercise/game/SceneTTT.kt</url>
+          <line>343</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/cga/exercise/game/SceneTTT.kt</url>
+          <line>252</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

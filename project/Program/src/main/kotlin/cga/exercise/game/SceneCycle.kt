@@ -68,10 +68,10 @@ class SceneCycle(private val window: GameWindow) : Scene
         spotLight.rotateLocal(Vector3f(Math.toRadians(-15f), Math.toRadians(130f),0f))
 
         // Load floor---------------------------
-        floor.meshList[0].material?.emit = Texture2D("assets/textures/ground_emit.png", true)
-        floor.meshList[0].material?.emit?.bind(0)
-        floor.meshList[0].material?.tcMultiplier = Vector2f(64f,64f)
-        floor.meshList[0].material?.color?.set(Vector3f(0f,1f,0f))
+        floor.MeshList[0].material?.emit = Texture2D("assets/textures/ground_emit.png", true)
+        floor.MeshList[0].material?.emit?.bind(0)
+        floor.MeshList[0].material?.tcMultiplier = Vector2f(64f,64f)
+        floor.MeshList[0].material?.color?.set(Vector3f(0f,1f,0f))
 
         floor.scaleLocal(2f)
         //floor.rotateLocal(90f, 0f,0f)
@@ -142,13 +142,13 @@ class SceneCycle(private val window: GameWindow) : Scene
         }
 
 
-        val oldColor = lightCycle.meshList[0].material?.color
+        val oldColor = lightCycle.MeshList[0].material?.color
 
         oldColor?.x = oldColor?.x?.plus(Math.sin(t) * dt)?.rem(1f)
         oldColor?.y = oldColor?.y?.plus(Math.cos(t) * dt)?.rem(1f)
         oldColor?.z = oldColor?.z?.plus(Math.acos(t) * dt)?.rem(1f)
 
-        lightCycle.meshList[0].material?.color?.set(oldColor)
+        lightCycle.MeshList[0].material?.color?.set(oldColor)
     }
 
     override  fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
