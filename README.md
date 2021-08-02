@@ -9,6 +9,7 @@ Provisorisch: TTT
 
 # Featureliste
 | Feature | implementiert von.. |
+|---------|---------------------|
 | Stuff | Mir |
 
 # Bilder
