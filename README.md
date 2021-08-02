@@ -26,4 +26,4 @@ Bspw.
 - ...
 
 # Bilder
-![alt text](/images/2021-08-02 14_24_46-TTT.png)
+![alt text](./images/2021-08-02 14_24_46-TTT.png)
