@@ -26,4 +26,4 @@ Bspw.
 - ...
 
 # Bilder
-![plot](./images/2021-08-02 14_24_46-TTT.png)
+![plot](https://github.com/BitPaw/CGA_Project/tree/main/images/2021-08-02 14_24_46-TTT.png)
