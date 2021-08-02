@@ -26,4 +26,4 @@ Bspw.
 - ...
 
 # Bilder
-![Image of Yaktocat]("https://github.com/BitPaw/CGA_Project/tree/main/images/2021-08-02 14_24_46-TTT.png")
+![Image of Box](./images/5.png)
