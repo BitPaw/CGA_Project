@@ -25,4 +25,10 @@ class Renderable(meshList : MutableList<Mesh> = mutableListOf(), modelMatrix: Ma
     {
         addableMeshList.forEach { item -> MeshList.add(item) }
     }
+
+    // Clear all data and unregister!
+    fun Reset()
+    {
+
+    }
 }

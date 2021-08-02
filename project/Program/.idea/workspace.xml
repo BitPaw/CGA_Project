@@ -154,7 +154,7 @@
       <workItem from="1627742739673" duration="20182000" />
       <workItem from="1627826149655" duration="3181000" />
       <workItem from="1627896527800" duration="3252000" />
-      <workItem from="1627901025610" duration="29866000" />
+      <workItem from="1627901025610" duration="30637000" />
     </task>
     <servers />
   </component>
@@ -184,7 +184,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/cga/exercise/game/SceneTTT.kt</url>
-          <line>346</line>
+          <line>351</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>

@@ -2,6 +2,7 @@ package cga.exercise.game
 
 import Resource.Skybox
 import Resource.SpriteFont.SpriteFont
+import Resource.Text
 import TTT.*
 import TTT.Event.GameStateChangeEvent
 import TTT.Event.MatchEndEvent
@@ -42,7 +43,9 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val playerX = Texture2D("assets/TTT/Texture/X.png", true)
     private val playerO = Texture2D("assets/TTT/Texture/O.png", true)
 
+    //----<UI>-----------
     private val _font = SpriteFont("assets/TTT/Font/segoe.fnt")
+    private val _score = Text()
 
     private val _cross = Renderable(rectangle.MeshList)
 
@@ -75,6 +78,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         GL11.glPointSize(40f);
         GL11.glLineWidth(5f);
 
+
+        _score.FontSet(_font)
 
         rectangle.translateLocal(Vector3f(-1f, -1f, -1f))
         rectangle.scaleLocal(0.3f);
