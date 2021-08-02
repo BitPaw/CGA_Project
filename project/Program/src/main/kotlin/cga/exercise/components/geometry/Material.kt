@@ -19,13 +19,18 @@ class Material(var diff: Texture2D,
     fun bind(shaderProgram: ShaderProgram)
     {
 
-        emit.bind(0)
+        if(emit.texID > 0)
+        {
+            emit.bind(0)
+        }
+
+
 
         //shaderProgram.setUniform("diffuseTexture", diff);
-        shaderProgram.setUniform("emissiveTexture", 0)
+        //shaderProgram.setUniform("textureEmissive", 0)
         //shaderProgram.setUniform("specularTexture", specular);
         shaderProgram.setUniform("shiny", shininess)
-        shaderProgram.setUniform("tcMultiplier", tcMultiplier)
+        shaderProgram.setUniform("textureScaling", tcMultiplier)
         shaderProgram.setUniform("materialColor", color)
     }
 }

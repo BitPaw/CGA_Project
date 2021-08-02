@@ -12,14 +12,15 @@ in struct VertexData
 out vec4 ResultColor;
 
 uniform vec3 materialColor;
+uniform sampler2D textureEmissive;
 
 void main()
 {
-    float red =  abs(vertexData.Normal.x);
-    float green =  abs(vertexData.Normal.y);
-    float blue = abs(vertexData.Normal.z);
+   // vec3 mixedColor = materialColor * vertexData.Normal;
 
-    vec3 mixedColor = materialColor * vec3(red, green, blue);
+    vec4 texture = vec4(30f,30f,30f, 1f) * texture(textureEmissive, vertexData.TexturePosition);
 
-    ResultColor = vec4(mixedColor, 1.0f);
+    //vec4 mixedColorX4 = mix(texture, vec4(mixedColor, 1.0f), 0.2f) * 5f;
+
+    ResultColor = texture;
 }

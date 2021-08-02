@@ -11,8 +11,10 @@ import java.nio.ByteBuffer
  * Created by Fabian on 16.09.2017.
  */
 class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean): ITexture{
-    private var texID: Int = -1
-        private set
+    var texID: Int = -1
+
+
+
 
     init {
         try {
@@ -35,6 +37,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
             val imageData = STBImage.stbi_load(path, x, y, readChannels, 4)
                     ?: throw Exception("Image file \"" + path + "\" couldn't be read:\n" + STBImage.stbi_failure_reason())
 
+
             try {
                 return Texture2D(imageData, x.get(), y.get(), genMipMaps)
             } catch (ex: java.lang.Exception) {
@@ -45,8 +48,6 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
             }
         }
     }
-
-    val TextureID = texID
 
     override fun processTexture(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean)
     {
@@ -84,7 +85,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
 
     override fun bind(textureUnit: Int)  // ??
     {
-       // GL33C.glActiveTexture(GL33C.GL_TEXTURE0 + textureUnit);
+        //GL33C.glActiveTexture(GL33C.GL_TEXTURE0 + textureUnit);
         GL33C.glBindTexture(GL33C.GL_TEXTURE_2D, texID)
         //GL33C.glEnable(GL33C.GL_TEXTURE_2D)
     }

@@ -3,17 +3,24 @@ package cga.exercise.components.camera
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Math
+import org.joml.Matrix3f
 import org.joml.Matrix4f
 
 class TTTCamera(var fieldofView : Float = 45f, var aspectRatio: Float = 16f/9f, var nearPlane: Float = 0.1f, var farPlane: Float = 1000f) : ICamera, Transformable()
 {
     var ThirdDimension = true
+    var IgnoreTranslation = false
 
     override fun getCalculateViewMatrix(): Matrix4f
     {
-        val view = Matrix4f()
+        var view = Matrix4f()
 
         view.lookAt(getWorldPosition(),getWorldPosition().sub(getWorldZAxis()), getWorldYAxis())
+
+        if(IgnoreTranslation)
+        {
+            view = Matrix4f(Matrix3f(view))
+        }
 
         return view
     }

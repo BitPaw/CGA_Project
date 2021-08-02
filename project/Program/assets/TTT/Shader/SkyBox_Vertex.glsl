@@ -13,20 +13,15 @@ uniform mat4 projection_matrix;
 out struct VertexData
 {
     vec3 Position;
-    vec2 TexturePosition;
-    vec3 Normal;
+    vec3 TexturePosition;
 } vertexData;
-
-uniform vec2 textureScaling;
 
 void main()
 {
-    // projection_matrix *  view_matrix *
-    vec4 pos = model_matrix * vec4(position, 1.0f);
+    vec4 pos = view_matrix * view_matrix *  model_matrix * vec4(position, 1.0f);
 
     gl_Position = pos;
 
     vertexData.Position = pos.xyz;
-    vertexData.TexturePosition = texture * textureScaling;
-    vertexData.Normal  = vec3(inverse(transpose(view_matrix * model_matrix)) * vec4(normal, 1.0f));
+    vertexData.TexturePosition = position;
 }

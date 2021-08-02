@@ -17,6 +17,8 @@ out struct VertexData
     vec3 Normal;
 } vertexData;
 
+uniform vec2 textureScaling;
+
 void main()
 {
     vec4 pos = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0f);
@@ -24,6 +26,6 @@ void main()
     gl_Position = pos;
 
     vertexData.Position = pos.xyz;
-    vertexData.TexturePosition = texture;
+    vertexData.TexturePosition = texture * textureScaling;
     vertexData.Normal  = vec3(inverse(transpose(view_matrix * model_matrix)) * vec4(normal, 1.0f));
 }

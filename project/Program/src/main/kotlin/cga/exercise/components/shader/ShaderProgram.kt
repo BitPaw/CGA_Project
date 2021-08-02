@@ -41,13 +41,20 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
      * @param value Value
      * @return returns false if the uniform was not found in the shader
      */
-    fun setUniform(name: String, value: Float): Boolean {
+    fun setUniform(name: String, value: Float): Boolean
+    {
         if (programID == 0) return false
+
         val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
+
+        if (loc != -1)
+        {
             GL20.glUniform1f(loc, value)
             return true
         }
+
+        println("[Shader][Error] Could not set uniform Float <$name>")
+
         return false
     }
 
@@ -64,7 +71,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             return true
         }
 
-        println("[Shader][Error] Could not set uniform vector3 <$name>")
+        println("[Shader][Error] Could not set uniform vector3D <$name>")
 
         return false
     }
@@ -82,6 +89,8 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             return true
         }
 
+        println("[Shader][Error] Could not set Unifrom vector2D <$name>")
+
         return false
     }
 
@@ -97,6 +106,8 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             GL20.glUniform1i(loc,value)
             return true
         }
+
+        println("[Shader][Error] Could not set uniform Texture <$name>")
 
         return false
     }

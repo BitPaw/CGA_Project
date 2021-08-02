@@ -1,5 +1,6 @@
 package cga.exercise.game
 
+import Resource.Skybox
 import TTT.Event.GameStateChangeEvent
 import TTT.Event.MatchEndEvent
 import TTT.Event.PlayerPlaceEvent
@@ -35,27 +36,44 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     // Actual, Scene
     private val fieldList = mutableListOf<Renderable>()
 
+    private val missingTexture =  Texture2D("assets/TTT/Texture/MissingTexture.png", true)
+    private val brickTexture = Texture2D("assets/TTT/Texture/X.png", true)
 
+    private val _skybox = Skybox(
+        "assets/TTT/Shader/SkyBox_Vertex.glsl",
+        "assets/TTT/Shader/SkyBox_Fragment.glsl",
+        "assets/TTT/Model/Cube.obj",
+        "assets/TTT/Texture/MissingTexture.png",
+        "assets/TTT/Texture/MissingTexture.png",
+        "assets/TTT/Texture/MissingTexture.png",
+        "assets/TTT/Texture/MissingTexture.png",
+        "assets/TTT/Texture/MissingTexture.png",
+        "assets/TTT/Texture/MissingTexture.png"
+    )
 
     init
     {
         _game.Start(3,3)
 
-        //glClearColor(0.6f, 1.0f, 1.0f, 1.0f); GLError.checkThrow()
-        GL11.glClearColor(0.10f, 0.10f, 0.10f, 1.0f); GLError.checkThrow()
+        GL11.glClearColor(0.6f, 0.6f, 0.6f, 1.0f); GLError.checkThrow()
+        //GL11.glClearColor(0.10f, 0.10f, 0.10f, 1.0f); GLError.checkThrow()
         GL11.glEnable(GL11.GL_CULL_FACE); GLError.checkThrow()
         GL11.glFrontFace(GL11.GL_CCW); GLError.checkThrow()
         GL11.glCullFace(GL11.GL_BACK); GLError.checkThrow()
         GL11.glEnable(GL11.GL_DEPTH_TEST); GLError.checkThrow()
         GL11.glDepthFunc(GL11.GL_LESS); GLError.checkThrow()
 
+        GL33C.glActiveTexture(0);
+
         rectangle.translateLocal(Vector3f(-1f, -1f, -1f))
         rectangle.scaleLocal(0.3f);
         //rectangle.meshList[0].RenderMode = GL33C.GL_QUADS
-       // rectangle.meshList[0].material?.emit = Texture2D("assets/TTT/Texture/X.png", true)
+        rectangle.meshList[0].material?.emit = brickTexture
 
         _camera.translateGlobal(Vector3f(0f, 3f, 6f))
         _camera.rotateLocal(toRadians(-35f), 0f, 0f)
+
+        cube.modelMatrix.translate(-0.5f,-0.5f,-0.5f)
     }
 
     //-----<Engine internal>--------------------------------------------------------------------------------------------
@@ -65,12 +83,21 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
 
         //-----<Skybox>-------------------------------------------------------------------------------------------------
-        // Todo: Add Skybox
+        GL33C.glDepthMask(false)
+        //GL11.glFrontFace(GL11.GL_CW)
+        _skybox.Shader.use()
+        _camera.IgnoreTranslation = true
+        _camera.bind(_skybox.Shader)
+        _skybox.Texture.bind(0)
+        _skybox.Cube?.render(_skybox.Shader)
+       // GL11.glFrontFace(GL11.GL_CCW)
+        GL33C.glDepthMask(true)
         //--------------------------------------------------------------------------------------------------------------
 
         //-----<WORLD>--------------------------------------------------------------------------------------------------
         shaderWorld.use()
         _camera.ThirdDimension = true
+        _camera.IgnoreTranslation = false
         _camera.bind(shaderWorld)
         fieldList.forEach{element -> element.render(shaderWorld)}
         //--------------------------------------------------------------------------------------------------------------
@@ -78,6 +105,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         //-----<HUD>----------------------------------------------------------------------------------------------------
         shaderHUD.use()
         _camera.ThirdDimension = false;
+        _camera.IgnoreTranslation = true
         _camera.bind(shaderHUD)
         rectangle.render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
@@ -85,7 +113,51 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun update(dt: Float, t: Float)
     {
+        val moveForward = window.getKeyState(GLFW.GLFW_KEY_W) || window.getKeyState(GLFW.GLFW_KEY_UP)
+        val moveLeft = window.getKeyState(GLFW.GLFW_KEY_LEFT)
+        val moveRight =window.getKeyState(GLFW.GLFW_KEY_RIGHT)
+        val moveBackwards = window.getKeyState(GLFW.GLFW_KEY_S) || window.getKeyState(GLFW.GLFW_KEY_DOWN)
+        val rotateRight = window.getKeyState(GLFW.GLFW_KEY_D)
+        val rotateLeft = window.getKeyState(GLFW.GLFW_KEY_A)
+        val isSpacePressed = window.getKeyState(GLFW.GLFW_KEY_SPACE)
+        val isLeftShiftPressed = window.getKeyState(GLFW.GLFW_KEY_LEFT_SHIFT)
+        val movementspeed = 10f * dt
+        val viewSpeed = 1f * dt
+        val movementVector = Vector3f()
+        val roationVector = Vector3f()
+        val hasMovedLinar =  moveForward || moveBackwards || isLeftShiftPressed || isSpacePressed || moveLeft || moveRight
+        val rotate = rotateLeft || rotateRight
 
+
+        if(moveLeft)
+            movementVector.set(-movementspeed,0f, 0f)
+
+        if(moveRight)
+            movementVector.set(movementspeed,0f, 0f)
+
+        if(isSpacePressed)
+            movementVector.set(0f,movementspeed, 0f)
+
+        if(isLeftShiftPressed)
+            movementVector.set(0f,-movementspeed, 0f)
+
+        if(moveForward)
+            movementVector.set(0f,0f, -movementspeed)
+
+        if(moveBackwards)
+            movementVector.set(0f,0f, movementspeed)
+
+        if(rotateLeft)
+            roationVector.set(0f,viewSpeed, 0f)
+
+        if(rotateRight)
+            roationVector.set(0f,-viewSpeed, 0f)
+
+        if((rotate) || hasMovedLinar)
+        {
+            _camera.rotateLocal(roationVector)
+            _camera.translateGlobal(movementVector)
+        }
     }
 
     override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
@@ -133,6 +205,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
                 val newPosition = Vector3f(x.toFloat() * gapBetween - offset.x, 0f, y.toFloat() * gapBetween - offset.y)
 
                 newObject.translateLocal(newPosition)
+
+                newObject.meshList.forEach{element -> element.material?.emit = brickTexture}
 
                 fieldList.add(newObject)
             }

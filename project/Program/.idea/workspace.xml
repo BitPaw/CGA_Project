@@ -82,15 +82,13 @@
     </key>
   </component>
   <component name="RunManager" selected="Kotlin.MainKt">
-    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="CLASS" />
-      <properties />
-      <listeners />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -152,6 +150,8 @@
       <workItem from="1626275187491" duration="2161000" />
       <workItem from="1627742739673" duration="20182000" />
       <workItem from="1627826149655" duration="3181000" />
+      <workItem from="1627896527800" duration="3252000" />
+      <workItem from="1627901025610" duration="8769000" />
     </task>
     <servers />
   </component>
