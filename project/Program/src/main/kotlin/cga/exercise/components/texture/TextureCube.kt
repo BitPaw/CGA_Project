@@ -25,7 +25,7 @@ class TextureCube(
         val readChannels = BufferUtils.createIntBuffer(1)
 
         //flip y coordinate to make OpenGL happy
-        STBImage.stbi_set_flip_vertically_on_load(true)
+        STBImage.stbi_set_flip_vertically_on_load(false)
         val imageData = STBImage.stbi_load(filePath, x, y, readChannels, 4)
             ?: throw Exception("Image file \"" + filePath + "\" couldn't be read:\n" + STBImage.stbi_failure_reason())
 

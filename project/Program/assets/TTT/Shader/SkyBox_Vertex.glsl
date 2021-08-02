@@ -12,16 +12,14 @@ uniform mat4 projection_matrix;
 
 out struct VertexData
 {
-    vec3 Position;
     vec3 TexturePosition;
 } vertexData;
 
 void main()
 {
-    vec4 pos = view_matrix * view_matrix *  model_matrix * vec4(position, 1.0f);
+    vec4 pos = projection_matrix * view_matrix *  model_matrix * vec4(position, 1.0f);
 
     gl_Position = pos;
 
-    vertexData.Position = pos.xyz;
     vertexData.TexturePosition = position;
 }

@@ -3,7 +3,6 @@
 //input from vertex shader
 in struct VertexData
 {
-    vec3 Position;
     vec3 TexturePosition;
 } vertexData;
 

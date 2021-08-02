@@ -17,6 +17,8 @@ import cga.framework.GameWindow
 import cga.framework.ModelLoader
 import org.joml.Math
 import org.joml.Math.toRadians
+import org.joml.Vector2d
+import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
@@ -43,12 +45,12 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         "assets/TTT/Shader/SkyBox_Vertex.glsl",
         "assets/TTT/Shader/SkyBox_Fragment.glsl",
         "assets/TTT/Model/Cube.obj",
-        "assets/TTT/Texture/MissingTexture.png",
-        "assets/TTT/Texture/MissingTexture.png",
-        "assets/TTT/Texture/MissingTexture.png",
-        "assets/TTT/Texture/MissingTexture.png",
-        "assets/TTT/Texture/MissingTexture.png",
-        "assets/TTT/Texture/MissingTexture.png"
+        "assets/TTT/Texture/SkyBox/Right.png",
+        "assets/TTT/Texture/SkyBox/Left.png",
+        "assets/TTT/Texture/SkyBox/Top.png",
+        "assets/TTT/Texture/SkyBox/Bottom.png",
+        "assets/TTT/Texture/SkyBox/Back.png",
+        "assets/TTT/Texture/SkyBox/Front.png"
     )
 
     init
@@ -63,7 +65,11 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         GL11.glEnable(GL11.GL_DEPTH_TEST); GLError.checkThrow()
         GL11.glDepthFunc(GL11.GL_LESS); GLError.checkThrow()
 
-        GL33C.glActiveTexture(0);
+        //GL33C.glActiveTexture(0);
+
+        GL11.glPointSize(40f);
+        GL11.glLineWidth(5f);
+
 
         rectangle.translateLocal(Vector3f(-1f, -1f, -1f))
         rectangle.scaleLocal(0.3f);
@@ -73,7 +79,9 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.translateGlobal(Vector3f(0f, 3f, 6f))
         _camera.rotateLocal(toRadians(-35f), 0f, 0f)
 
-        cube.modelMatrix.translate(-0.5f,-0.5f,-0.5f)
+        //cube.translateLocal(0.5f,0.5f,0.5f)
+        _skybox.Cube?.scaleLocal(100f);
+
     }
 
     //-----<Engine internal>--------------------------------------------------------------------------------------------
@@ -84,13 +92,16 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         //-----<Skybox>-------------------------------------------------------------------------------------------------
         GL33C.glDepthMask(false)
-        //GL11.glFrontFace(GL11.GL_CW)
+        GL11.glFrontFace(GL11.GL_CW)
         _skybox.Shader.use()
-        _camera.IgnoreTranslation = true
+        //_camera.IgnoreTranslation = true
         _camera.bind(_skybox.Shader)
         _skybox.Texture.bind(0)
+        //_skybox.Cube?.meshList?.get(0)!!.RenderMode = GL11.GL_POINTS
+        //_skybox.Cube?.render(_skybox.Shader)
+        //_skybox.Cube?.meshList?.get(0)!!.RenderMode = GL11.GL_TRIANGLES
         _skybox.Cube?.render(_skybox.Shader)
-       // GL11.glFrontFace(GL11.GL_CCW)
+        GL11.glFrontFace(GL11.GL_CCW)
         GL33C.glDepthMask(true)
         //--------------------------------------------------------------------------------------------------------------
 
@@ -103,11 +114,11 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         //--------------------------------------------------------------------------------------------------------------
 
         //-----<HUD>----------------------------------------------------------------------------------------------------
-        shaderHUD.use()
-        _camera.ThirdDimension = false;
-        _camera.IgnoreTranslation = true
-        _camera.bind(shaderHUD)
-        rectangle.render(shaderHUD)
+        //shaderHUD.use()
+        //_camera.ThirdDimension = false;
+        //_camera.IgnoreTranslation = true
+        //_camera.bind(shaderHUD)
+        //rectangle.render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
     }
 
@@ -155,7 +166,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         if((rotate) || hasMovedLinar)
         {
-            _camera.rotateLocal(roationVector)
+           // _camera.rotateLocal(roationVector)
             _camera.translateGlobal(movementVector)
         }
     }
@@ -165,9 +176,26 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         // Todo: Add UserInput
     }
 
+    val mousePositionCurrent = Vector2d(0.0, 0.0)
+    val mousePositionDelta = Vector2d(0.0, 0.0)
+
     override fun onMouseMove(xpos: Double, ypos: Double)
     {
-        // Todo: Add UserInput
+        val newPos = Vector2d(xpos, ypos)
+
+        mousePositionDelta.set(newPos)
+        mousePositionDelta.sub(mousePositionCurrent)
+
+        mousePositionCurrent.set(newPos)
+
+
+        val viewMoveVector = Vector2f(mousePositionDelta.x.toFloat(), mousePositionDelta.y.toFloat())
+
+        viewMoveVector.mul(0.005f)
+
+        _camera.rotateLocal(-viewMoveVector.y, -viewMoveVector.x, 0f)
+
+        //println("Mouse pos ${mousePositionDelta.x} - ${mousePositionDelta.y}")
     }
 
     override fun cleanup()
