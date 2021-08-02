@@ -1,6 +1,5 @@
 package TTT
 
-class GameField(val x : Int, val y : Int)
+class GameField(val x : Int, val y : Int, val token:Placeable)
 {
-    val PlacedToken = Placeable()
 }
