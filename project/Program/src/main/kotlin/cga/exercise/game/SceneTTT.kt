@@ -1,6 +1,7 @@
 package cga.exercise.game
 
 import Resource.Skybox
+import Resource.SpriteFont.SpriteFont
 import TTT.*
 import TTT.Event.GameStateChangeEvent
 import TTT.Event.MatchEndEvent
@@ -40,6 +41,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val brickTexture = Texture2D("assets/TTT/Texture/Brick.png", true)
     private val playerX = Texture2D("assets/TTT/Texture/X.png", true)
     private val playerO = Texture2D("assets/TTT/Texture/O.png", true)
+
+    private val _font = SpriteFont("assets/TTT/Font/segoe.fnt")
 
     private val _cross = Renderable(rectangle.MeshList)
 
