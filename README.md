@@ -13,6 +13,6 @@ Provisorisch: TTT
 | Stuff | Mir |
 
 # Bilder
-![Image](./images/5.png)
-![Image](./images/6.png)
-![Image](./images/8.png)
+![Image](./images/005.png)
+![Image](./images/006.png)
+![Image](./images/008.png)
