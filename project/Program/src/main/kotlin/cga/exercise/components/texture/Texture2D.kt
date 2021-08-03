@@ -27,13 +27,13 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
         //create texture from file
         //don't support compressed textures for now
         //instead stick to pngs
-        operator fun invoke(path: String, genMipMaps: Boolean): Texture2D {
+        operator fun invoke(path: String, genMipMaps: Boolean, rotateOnLoad : Boolean = true): Texture2D {
 
             val x = BufferUtils.createIntBuffer(1)
             val y = BufferUtils.createIntBuffer(1)
             val readChannels = BufferUtils.createIntBuffer(1)
             //flip y coordinate to make OpenGL happy
-            STBImage.stbi_set_flip_vertically_on_load(true)
+            STBImage.stbi_set_flip_vertically_on_load(rotateOnLoad)
             val imageData = STBImage.stbi_load(path, x, y, readChannels, 4)
                     ?: throw Exception("Image file \"" + path + "\" couldn't be read:\n" + STBImage.stbi_failure_reason())
 

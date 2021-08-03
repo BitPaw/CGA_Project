@@ -8,5 +8,10 @@ class SpriteFontPage(
     val CharacterList: MutableList<SpriteFontCharacter> = mutableListOf()
 )
 {
-    val Texture = Texture2D(TextureFileName, true)
+    val Texture = Texture2D(TextureFileName, true, false)
+
+    fun GetCharacter(targetCharacter: Int) : SpriteFontCharacter?
+    {
+        return  CharacterList.find {it.ID == targetCharacter }
+    }
 }

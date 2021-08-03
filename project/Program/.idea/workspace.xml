@@ -146,7 +146,7 @@
       <workItem from="1627901025610" duration="30637000" />
       <workItem from="1627989439858" duration="299000" />
       <workItem from="1627989799201" duration="849000" />
-      <workItem from="1627990808959" duration="10130000" />
+      <workItem from="1627990808959" duration="23935000" />
     </task>
     <servers />
   </component>
@@ -171,7 +171,18 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/Resource/Text.kt</url>
+          <line>185</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Program$MainKt.ic" NAME="MainKt Coverage Results" MODIFIED="1627940489510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/Program$MainKt.ic" NAME="MainKt Coverage Results" MODIFIED="1628028644239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

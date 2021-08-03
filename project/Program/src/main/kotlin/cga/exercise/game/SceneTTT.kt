@@ -20,6 +20,7 @@ import cga.framework.ModelLoader
 import org.joml.Math.toRadians
 import org.joml.Vector2d
 import org.joml.Vector2f
+import org.joml.Vector2i
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
@@ -51,6 +52,9 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     private val _cross = Renderable(rectangle.MeshList)
 
+    private val mousePositionCurrent = Vector2d(0.0, 0.0)
+    private val mousePositionDelta = Vector2d(0.0, 0.0)
+
     private val _skybox = Skybox(
         "assets/TTT/Shader/SkyBox_Vertex.glsl",
         "assets/TTT/Shader/SkyBox_Fragment.glsl",
@@ -77,11 +81,14 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         //GL33C.glActiveTexture(0);
 
-        GL11.glPointSize(40f);
-        GL11.glLineWidth(5f);
+        GL11.glPointSize(80f);
+        GL11.glLineWidth(10f);
 
 
+       // _score.modelMatrix.scale(1f)
+        _score.translateLocal(-0.5f, 0.4f, -1f)
         _score.FontSet(_font)
+        _score.TextSet("Fight Ligma")
 
         cube.MeshList[0].material.emit = brickTexture
 
@@ -130,6 +137,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.IgnoreTranslation = false
         _camera.bind(shaderWorld)
         fieldList.forEach{element -> element.Render(shaderWorld, playerX, playerO)}
+        _score.render(shaderWorld)
         //--------------------------------------------------------------------------------------------------------------
 
         //-----<HUD>----------------------------------------------------------------------------------------------------
@@ -139,6 +147,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.bind(shaderHUD)
         rectangle.render(shaderHUD)
         _cross.render(shaderHUD)
+        _score.render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
     }
 
@@ -189,17 +198,35 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
            // _camera.rotateLocal(roationVector)
             _camera.translateGlobal(movementVector)
         }
-
-        val gamefield = HandleFieldInput()
     }
 
     override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
     {
-        // Todo: Add UserInput
-    }
+        if(GLFW.GLFW_PRESS == action) // OnPressDown
+        {
+            val field = Vector2i(-1, -1)
 
-    val mousePositionCurrent = Vector2d(0.0, 0.0)
-    val mousePositionDelta = Vector2d(0.0, 0.0)
+            when(key)
+            {
+                GLFW.GLFW_KEY_KP_1 -> field.set(0,0)
+                GLFW.GLFW_KEY_KP_2 -> field.set(1,0)
+                GLFW.GLFW_KEY_KP_3 -> field.set(2,0)
+                GLFW.GLFW_KEY_KP_4 -> field.set(0,1)
+                GLFW.GLFW_KEY_KP_5 -> field.set(1,1)
+                GLFW.GLFW_KEY_KP_6 -> field.set(2,1)
+                GLFW.GLFW_KEY_KP_7 -> field.set(0,2)
+                GLFW.GLFW_KEY_KP_8 -> field.set(1,2)
+                GLFW.GLFW_KEY_KP_9 -> field.set(2,2)
+            }
+
+            if(field != Vector2i(-1, -1))
+            {
+                val gameField = GameField(field.x, field.y, _game.CurrentPlayerOnTurn, 10)
+
+                _game.PlayerPlace(gameField)
+            }
+        }
+    }
 
     override fun onMouseMove(xpos: Double, ypos: Double)
     {
@@ -362,12 +389,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
             y = 2
         }
 
-        if(x != -1 && y != -1)
-        {
-            val gameField = GameField(x, y, _game.CurrentPlayerOnTurn, 10)
 
-            _game.PlayerPlace(gameField)
-        }
     }
 
     private fun SetBlockOwnerShip(gameField: GameField)
