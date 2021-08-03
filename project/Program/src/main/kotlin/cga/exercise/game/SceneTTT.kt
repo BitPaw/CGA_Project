@@ -1,5 +1,6 @@
 package cga.exercise.game
 
+import Resource.Pillar
 import Resource.Skybox
 import Resource.SpriteFont.SpriteFont
 import Resource.Text
@@ -32,11 +33,12 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val shaderHUD: ShaderProgram = ShaderProgram("assets/TTT/Shader/HUD_Vertex.glsl", "assets/TTT/Shader/HUD_Fragment.glsl")
     private val shaderWorld: ShaderProgram = ShaderProgram("assets/TTT/Shader/WorldShader_Vertex.glsl", "assets/TTT/Shader/WorldShader_Fragment.glsl")
 
-    private val cube =  ModelLoader.loadModel("assets/TTT/Model/Cube.obj", 0f, toRadians(0f),0f)!!;
+    private val cube =  ModelLoader.loadModel("assets/TTT/Model/Pillar.obj", 0f, toRadians(0f),0f)!!;
     private val rectangle = ModelLoader.loadModel("assets/TTT/Model/Recangle.obj", 0f, toRadians(0f),0f)!!;
+    private val _blockPlaceable = ModelLoader.loadModel("assets/TTT/Model/Placeable.obj", 0f, toRadians(0f),0f)!!;
 
     // Actual, Scene
-    private val fieldList = mutableListOf<Renderable>()
+    private val fieldList = mutableListOf<Pillar>()
 
     private val missingTexture =  Texture2D("assets/TTT/Texture/MissingTexture.png", true)
     private val brickTexture = Texture2D("assets/TTT/Texture/Brick.png", true)
@@ -80,6 +82,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
 
         _score.FontSet(_font)
+
+        cube.MeshList[0].material.emit = brickTexture
 
         rectangle.translateLocal(Vector3f(-1f, -1f, -1f))
         rectangle.scaleLocal(0.3f);
@@ -125,7 +129,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.ThirdDimension = true
         _camera.IgnoreTranslation = false
         _camera.bind(shaderWorld)
-        fieldList.forEach{element -> element.render(shaderWorld)}
+        fieldList.forEach{element -> element.Render(shaderWorld, playerX, playerO)}
         //--------------------------------------------------------------------------------------------------------------
 
         //-----<HUD>----------------------------------------------------------------------------------------------------
@@ -186,14 +190,115 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
             _camera.translateGlobal(movementVector)
         }
 
-
-
         val gamefield = HandleFieldInput()
+    }
 
+    override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
+    {
+        // Todo: Add UserInput
+    }
 
+    val mousePositionCurrent = Vector2d(0.0, 0.0)
+    val mousePositionDelta = Vector2d(0.0, 0.0)
 
+    override fun onMouseMove(xpos: Double, ypos: Double)
+    {
+        val newPos = Vector2d(xpos, ypos)
+
+        mousePositionDelta.set(newPos)
+        mousePositionDelta.sub(mousePositionCurrent)
+
+        mousePositionCurrent.set(newPos)
+
+        val viewMoveVector = Vector2f(mousePositionDelta.x.toFloat(), mousePositionDelta.y.toFloat())
+
+        viewMoveVector.mul(-0.005f)
+
+        _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
+    }
+
+    override fun cleanup()
+    {
 
     }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    //-----<Game Events>------------------------------------------------------------------------------------------------
+
+    override fun OnGameStateChange(gameStateChange: GameStateChangeEvent)
+    {
+        TODO("Not yet implemented")
+    }
+
+    override fun OnMatchEnd(matchEndEvent: MatchEndEvent)
+    {
+        TODO("Not yet implemented")
+    }
+
+    override fun OnMatchBegin(width : Int, height : Int)
+    {
+        println("<Event: Match begin> Width:$width Height:$height")
+
+        //-----<Build Field>--------------------------------------------------------------------------------------------
+        val gapBetween = 3.5f
+        val offset = Vector3f(width/2f, 0f, height/2f)
+
+        for (y in 0 until height)
+        {
+            for (x in 0 until width)
+            {
+                val newObject = Renderable(cube.MeshList)
+                val newBlock =  Renderable(_blockPlaceable.MeshList)
+                val newPosition = Vector3f(x.toFloat() * gapBetween - offset.x, 0f, y.toFloat() * gapBetween - offset.y)
+                val gameField = GameField(x, y)
+
+                val rr = Pillar(gameField, newObject,newBlock)
+
+                newObject.translateLocal(newPosition)
+                newBlock.translateLocal(newPosition)
+                newBlock.translateLocal(0f, 3.3f, 0f)
+
+                fieldList.add(rr)
+            }
+        }
+        //------------------------------------------------------------------------------------------------------------------
+    }
+
+    override fun OnPlayerInteract(playerPlaceEvent: PlayerPlaceEvent)
+    {
+        when(playerPlaceEvent.result)
+        {
+            PlayerPlaceResult.InvalidAction -> TODO()
+            PlayerPlaceResult.Successful -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.SuccessfulOverride -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.NotYourTurn -> TODO()
+            PlayerPlaceResult.NotInField -> TODO()
+            PlayerPlaceResult.Occupied -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.AlreadyUsed -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+        }
+    }
+
+    override fun OnPlayerTurnChangeEvent(playerTurnChangeEvent: PlayerTurnChangeEvent)
+    {
+
+    }
+
+    override fun OnPlayerPlace(gameField: GameField)
+    {
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 
     fun HandleFieldInput()
     {
@@ -264,75 +369,6 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         }
     }
 
-    override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
-    {
-        // Todo: Add UserInput
-    }
-
-    val mousePositionCurrent = Vector2d(0.0, 0.0)
-    val mousePositionDelta = Vector2d(0.0, 0.0)
-
-    override fun onMouseMove(xpos: Double, ypos: Double)
-    {
-        val newPos = Vector2d(xpos, ypos)
-
-        mousePositionDelta.set(newPos)
-        mousePositionDelta.sub(mousePositionCurrent)
-
-        mousePositionCurrent.set(newPos)
-
-        val viewMoveVector = Vector2f(mousePositionDelta.x.toFloat(), mousePositionDelta.y.toFloat())
-
-        viewMoveVector.mul(-0.005f)
-
-        _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
-    }
-
-    override fun cleanup()
-    {
-
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    //-----<Game Events>------------------------------------------------------------------------------------------------
-
-    override fun OnGameStateChange(gameStateChange: GameStateChangeEvent)
-    {
-        TODO("Not yet implemented")
-    }
-
-    override fun OnMatchEnd(matchEndEvent: MatchEndEvent)
-    {
-        TODO("Not yet implemented")
-    }
-
-    override fun OnMatchBegin(width : Int, height : Int)
-    {
-        println("<Event: Match begin> Width:$width Height:$height")
-
-        //-----<Build Field>--------------------------------------------------------------------------------------------
-        val gapBetween = 2.5f
-        val offset = Vector3f(width/2f, 0f, height/2f)
-
-        for (y in 0 until height)
-        {
-            for (x in 0 until width)
-            {
-                val newObject = Renderable(cube.MeshList)
-                val newPosition = Vector3f(x.toFloat() * gapBetween - offset.x, 0f, y.toFloat() * gapBetween - offset.y)
-
-                newObject.translateLocal(newPosition)
-
-
-                newObject.MeshList.forEach{element ->  element.material = Material(brickTexture) }
-
-                fieldList.add(newObject)
-            }
-        }
-        //------------------------------------------------------------------------------------------------------------------
-    }
-
     private fun SetBlockOwnerShip(gameField: GameField)
     {
         val index = gameField.x + (gameField.y + 2)
@@ -344,32 +380,10 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
             PlayerSymbol.O -> playerO
         }
 
-        fieldList[index].MeshList[0].material?.emit = texture
+        fieldList[index].Field.Symbol = gameField.Symbol
     }
 
-    override fun OnPlayerInteract(playerPlaceEvent: PlayerPlaceEvent)
-    {
-        when(playerPlaceEvent.result)
-        {
-            PlayerPlaceResult.InvalidAction -> TODO()
-            PlayerPlaceResult.Successful -> SetBlockOwnerShip(playerPlaceEvent.gameField)
-            PlayerPlaceResult.SuccessfulOverride -> SetBlockOwnerShip(playerPlaceEvent.gameField)
-            PlayerPlaceResult.NotYourTurn -> TODO()
-            PlayerPlaceResult.NotInField -> TODO()
-            PlayerPlaceResult.Occupied -> SetBlockOwnerShip(playerPlaceEvent.gameField)
-            PlayerPlaceResult.AlreadyUsed -> SetBlockOwnerShip(playerPlaceEvent.gameField)
-        }
-    }
 
-    override fun OnPlayerTurnChangeEvent(playerTurnChangeEvent: PlayerTurnChangeEvent)
-    {
 
-    }
 
-    override fun OnPlayerPlace(gameField: GameField)
-    {
-
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
 }

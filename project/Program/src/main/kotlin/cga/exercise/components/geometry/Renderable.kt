@@ -3,15 +3,8 @@ package cga.exercise.components.geometry
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 
-class Renderable(meshList : MutableList<Mesh> = mutableListOf(), modelMatrix: Matrix4f = Matrix4f(), parent: Transformable? = null): Transformable(modelMatrix, parent), IRenderable
+class Renderable(val MeshList : MutableList<Mesh> = mutableListOf(), modelMatrix: Matrix4f = Matrix4f(), parent: Transformable? = null): Transformable(modelMatrix, parent), IRenderable
 {
-    var MeshList = mutableListOf<Mesh>()
-
-    init
-    {
-        meshList.forEach{mesh ->  MeshList.add(mesh)}
-    }
-
     override fun render(shaderProgram: ShaderProgram)
     {
         shaderProgram.use()

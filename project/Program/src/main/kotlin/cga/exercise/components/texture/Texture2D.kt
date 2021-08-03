@@ -58,7 +58,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
 
         GL33C.glTexImage2D(mode, 0, GL33C.GL_RGBA, width, height, 0, GL33C.GL_RGBA, GL33C.GL_UNSIGNED_BYTE, imageData);
 
-        setTexParams(GL33C.GL_CLAMP_TO_BORDER, GL33C.GL_CLAMP_TO_EDGE, GL33C.GL_NEAREST , GL33C.GL_NEAREST)
+        setTexParams(GL33C.GL_CLAMP_TO_BORDER, GL33C.GL_CLAMP_TO_BORDER, GL33C.GL_NEAREST , GL33C.GL_NEAREST)
 
         if(genMipMaps)
         {

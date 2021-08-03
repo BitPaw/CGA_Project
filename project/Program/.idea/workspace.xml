@@ -85,17 +85,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Kotlin.MainKt">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="CGA" type="JetRunConfigurationType" temporary="true">
       <option name="MAIN_CLASS_NAME" value="cga.exercise.MainKt" />
       <module name="Project.main" />
@@ -155,6 +144,9 @@
       <workItem from="1627826149655" duration="3181000" />
       <workItem from="1627896527800" duration="3252000" />
       <workItem from="1627901025610" duration="30637000" />
+      <workItem from="1627989439858" duration="299000" />
+      <workItem from="1627989799201" duration="849000" />
+      <workItem from="1627990808959" duration="7603000" />
     </task>
     <servers />
   </component>
@@ -184,7 +176,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/cga/exercise/game/SceneTTT.kt</url>
-          <line>351</line>
+          <line>269</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
