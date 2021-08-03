@@ -204,6 +204,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     override fun onMouseMove(xpos: Double, ypos: Double)
     {
         val newPos = Vector2d(xpos, ypos)
+        val viewSpeed = 0.005f
 
         mousePositionDelta.set(newPos)
         mousePositionDelta.sub(mousePositionCurrent)
@@ -212,7 +213,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         val viewMoveVector = Vector2f(mousePositionDelta.x.toFloat(), mousePositionDelta.y.toFloat())
 
-        viewMoveVector.mul(-0.005f)
+        viewMoveVector.mul(-viewSpeed)
 
         _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
     }
@@ -371,7 +372,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     private fun SetBlockOwnerShip(gameField: GameField)
     {
-        val index = gameField.x + (gameField.y + 2)
+        val index = gameField.x + (gameField.y * 3)
 
         val texture = when(gameField.Symbol)
         {
