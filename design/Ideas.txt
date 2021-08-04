@@ -1,0 +1,5 @@
+Feature Ideas for 5 Minutes Quick:
+- better view on Playingfield with WASD W/S= Zoom/Dezoom, A/D= move alittle Left/Right all in Bounds
+- DESTROY TILES for not 3x3 Fields maby addable throught points earned at the start of each Turn
+- Grow Matroschka to max size as Ability
+- ...

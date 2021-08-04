@@ -1,5 +1,0 @@
-2.1 Objekt Ground.obj Laden
-2.1.1 Für Kugel und Boden Matrix4f datentyp erstellen, Boden um 90° auf x Rotieren, Boden um Faktor 0,03 skalieren und Kugel um 0,05 skalieren
-2.1.2 Kugel und boden Uniformen geben und mit Shadern versehen
-2.1.3 Normalen als Frabe auswerten, Eventuel Shader anpassen, Eventuell Normalen Normalisieren
-

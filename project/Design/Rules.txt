@@ -1,8 +1,0 @@
-1. X und O werden Random ausgewürfelt
-2. Selection durch hovern mit halbtransparenten Figur über dem Feld
-3. 3 in einer Reihe gewinnt
-4. eine Figur kann nur von einer Größeren ersetzt werden
-5. Eine Figur kann nur einmal pro Runde verwendet werden
-6. Draw bei keinem Legalen Move oder Fehlenden Figuren
-7. Ein Spieler muss einen Zug machen
-8. Du darfst nicht rum diskutieren

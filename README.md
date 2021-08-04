@@ -10,7 +10,8 @@ Provisorisch: TTT
 # Featureliste
 | Feature | implementiert von.. |
 |---------|---------------------|
-| Stuff | Mir |
+| EventSystem | Lukas Momberg |
+| SpriteFont(.FNT) Support | Lukas Momberg |
 
 # Bilder
 ![Image](./images/005.png)
