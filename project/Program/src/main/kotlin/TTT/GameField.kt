@@ -1,5 +1,5 @@
 package TTT
 
-class GameField(val x : Int, val y : Int, var Symbol : PlayerSymbol = PlayerSymbol.None, val Strength : Int = 0)
+class GameField(var x : Int, var y : Int, var Symbol : PlayerSymbol = PlayerSymbol.None, val Strength : Int = 0)
 {
 }

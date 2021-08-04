@@ -82,7 +82,7 @@ class TTTGame(val callback : TTTGameListener)
                         }
                         else
                         {
-                            // Your placement is nor strong enogh
+                            // Your placement is nor strong enough
                             playerPlaceResult =  PlayerPlaceResult.Occupied
                         }
                     }
