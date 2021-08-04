@@ -1,2 +1,2 @@
-![Image](./Planung.png)
+![Image](./Planung.jpg)
 ![Image](./Title.png)
