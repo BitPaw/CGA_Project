@@ -5,10 +5,7 @@ import Resource.Skybox
 import Resource.SpriteFont.SpriteFont
 import Resource.Text
 import TTT.*
-import TTT.Event.GameStateChangeEvent
-import TTT.Event.MatchEndEvent
-import TTT.Event.PlayerPlaceEvent
-import TTT.Event.PlayerTurnChangeEvent
+import TTT.Event.*
 import cga.exercise.components.camera.TTTCamera
 import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
@@ -49,6 +46,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     //----<UI>-----------
     private val _font = SpriteFont("assets/TTT/Font/segoe.fnt")
     private val _score = Text()
+    private val _currentTurn = Text()
 
     private val _cross = Renderable(rectangle.MeshList)
 
@@ -87,8 +85,16 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
        // _score.modelMatrix.scale(1f)
         _score.translateLocal(-0.5f, 0.4f, -1f)
+        _score.scaleLocal(0.5f)
         _score.FontSet(_font)
         _score.TextSet("Fight Ligma")
+
+
+        _currentTurn.translateLocal(-0.5f, -0.4f, -1f)
+        _currentTurn.scaleLocal(0.5f)
+        _currentTurn.FontSet(_font)
+        _currentTurn.TextSet("Turn:")
+
 
         cube.MeshList[0].material.emit = brickTexture
 
@@ -137,7 +143,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.IgnoreTranslation = false
         _camera.bind(shaderWorld)
         fieldList.forEach{element -> element.Render(shaderWorld, playerX, playerO)}
-        _score.render(shaderWorld)
+        //_score.render(shaderWorld)
         //--------------------------------------------------------------------------------------------------------------
 
         //-----<HUD>----------------------------------------------------------------------------------------------------
@@ -148,6 +154,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         rectangle.render(shaderHUD)
         _cross.render(shaderHUD)
         _score.render(shaderHUD)
+        _currentTurn.render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
     }
 
@@ -221,7 +228,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
             if(field != Vector2i(-1, -1))
             {
-                val gameField = GameField(field.x, field.y, _game.CurrentPlayerOnTurn, 10)
+                val gameField = GameField(field.x, field.y, _game.GetCurrentPlayerOnTurn(), 10)
 
                 _game.PlayerPlace(gameField)
             }
@@ -230,6 +237,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun onMouseMove(xpos: Double, ypos: Double)
     {
+        val firstMove = mousePositionDelta.x == -1.0 && mousePositionDelta.y == -1.0
         val newPos = Vector2d(xpos, ypos)
         val viewSpeed = 0.005f
 
@@ -238,11 +246,14 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         mousePositionCurrent.set(newPos)
 
-        val viewMoveVector = Vector2f(mousePositionDelta.x.toFloat(), mousePositionDelta.y.toFloat())
+        if(!firstMove)
+        {
+            val viewMoveVector = Vector2f(mousePositionDelta.x.toFloat(), mousePositionDelta.y.toFloat())
 
-        viewMoveVector.mul(-viewSpeed)
+            viewMoveVector.mul(-viewSpeed)
 
-        _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
+            _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
+        }
     }
 
     override fun cleanup()
@@ -262,6 +273,18 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     override fun OnMatchEnd(matchEndEvent: MatchEndEvent)
     {
         TODO("Not yet implemented")
+    }
+
+    override fun OnRoundBegin()
+    {
+        _score.TextSet("NEW ROUND")
+
+        fieldList.forEach{element -> element.Field.Reset() }
+    }
+
+    override fun OnRoundEnd(roundEndEvent: RoundEndEvent)
+    {
+        _score.TextSet(roundEndEvent.RoundResult.toString())
     }
 
     override fun OnMatchBegin(width : Int, height : Int)
@@ -295,104 +318,30 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun OnPlayerInteract(playerPlaceEvent: PlayerPlaceEvent)
     {
+        _score.TextSet(playerPlaceEvent.result.toString())
+
+        /*
+
         when(playerPlaceEvent.result)
         {
             PlayerPlaceResult.InvalidAction -> TODO()
-            PlayerPlaceResult.Successful -> SetBlockOwnerShip(playerPlaceEvent.gameField)
-            PlayerPlaceResult.SuccessfulOverride -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.Successful -> TODO()
+            PlayerPlaceResult.SuccessfulOverride -> TODO()
             PlayerPlaceResult.NotYourTurn -> TODO()
             PlayerPlaceResult.NotInField -> TODO()
-            PlayerPlaceResult.Occupied -> SetBlockOwnerShip(playerPlaceEvent.gameField)
-            PlayerPlaceResult.AlreadyUsed -> SetBlockOwnerShip(playerPlaceEvent.gameField)
+            PlayerPlaceResult.Occupied -> TODO()
+            PlayerPlaceResult.AlreadyUsed -> TODO()
         }
+
+         */
     }
 
     override fun OnPlayerTurnChangeEvent(playerTurnChangeEvent: PlayerTurnChangeEvent)
     {
-
+        _currentTurn.TextSet("Turn: " + playerTurnChangeEvent.playerSymbol.toString())
     }
 
     override fun OnPlayerPlace(gameField: GameField)
-    {
-
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-    fun HandleFieldInput()
-    {
-        val field1 = window.getKeyState(GLFW.GLFW_KEY_KP_1)
-        val field2 = window.getKeyState(GLFW.GLFW_KEY_KP_2)
-        val field3 = window.getKeyState(GLFW.GLFW_KEY_KP_3)
-        val field4 = window.getKeyState(GLFW.GLFW_KEY_KP_4)
-        val field5 = window.getKeyState(GLFW.GLFW_KEY_KP_5)
-        val field6 = window.getKeyState(GLFW.GLFW_KEY_KP_6)
-        val field7 = window.getKeyState(GLFW.GLFW_KEY_KP_7)
-        val field8 = window.getKeyState(GLFW.GLFW_KEY_KP_8)
-        val field9 = window.getKeyState(GLFW.GLFW_KEY_KP_9)
-
-        var x = -1
-        var y = -1
-
-        if(field1)
-        {
-            x = 0
-            y = 0
-        }
-        else if(field2)
-        {
-            x = 1
-            y = 0
-        }
-        else if(field3)
-        {
-            x = 2
-            y = 0
-        }
-        else if(field4)
-        {
-            x = 0
-            y = 1
-        }
-        else if(field5)
-        {
-            x = 1
-            y = 1
-        }
-        else if(field6)
-        {
-            x = 2
-            y = 1
-        }
-        else if(field7)
-        {
-            x = 0
-            y = 2
-        }
-        else if(field8)
-        {
-            x = 1
-            y = 2
-        }
-        else if(field9)
-        {
-            x = 2
-            y = 2
-        }
-
-
-    }
-
-    private fun SetBlockOwnerShip(gameField: GameField)
     {
         val index = gameField.x + (gameField.y * 3)
 
@@ -406,7 +355,6 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         fieldList[index].Field.Symbol = gameField.Symbol
     }
 
-
-
+    //------------------------------------------------------------------------------------------------------------------
 
 }

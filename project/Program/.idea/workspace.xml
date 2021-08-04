@@ -38,9 +38,9 @@
       <list>
         <option value="Class" />
         <option value="Kotlin Interface" />
-        <option value="Kotlin Enum" />
         <option value="Kotlin File" />
         <option value="Kotlin Class" />
+        <option value="Kotlin Enum" />
       </list>
     </option>
   </component>
@@ -147,6 +147,7 @@
       <workItem from="1627989439858" duration="299000" />
       <workItem from="1627989799201" duration="849000" />
       <workItem from="1627990808959" duration="23935000" />
+      <workItem from="1628091021591" duration="6214000" />
     </task>
     <servers />
   </component>
@@ -175,9 +176,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/src/main/kotlin/Resource/Text.kt</url>
-          <line>185</line>
-          <option name="timeStamp" value="15" />
+          <url>file://$PROJECT_DIR$/src/main/kotlin/TTT/TTTGame.kt</url>
+          <line>85</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

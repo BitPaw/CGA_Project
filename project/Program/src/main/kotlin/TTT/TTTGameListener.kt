@@ -6,8 +6,14 @@ interface TTTGameListener
 {
     // Game
     fun OnGameStateChange(gameStateChange : GameStateChangeEvent)
-    fun OnMatchEnd(matchEndEvent : MatchEndEvent)
+
+    // Match
     fun OnMatchBegin(width : Int, height : Int)
+    fun OnMatchEnd(matchEndEvent : MatchEndEvent)
+
+    // Round
+    fun OnRoundBegin()
+    fun OnRoundEnd(roundEndEvent: RoundEndEvent)
 
     // Player
     fun OnPlayerInteract(playerPlaceEvent : PlayerPlaceEvent)

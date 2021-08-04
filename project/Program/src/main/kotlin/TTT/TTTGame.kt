@@ -2,6 +2,7 @@ package TTT
 
 import TTT.Event.PlayerPlaceEvent
 import TTT.Event.PlayerTurnChangeEvent
+import TTT.Event.RoundEndEvent
 
 class TTTGame(val callback : TTTGameListener)
 {
@@ -9,24 +10,29 @@ class TTTGame(val callback : TTTGameListener)
     private val _playerX = Player(PlayerSymbol.X)
     private val _playerO = Player(PlayerSymbol.O)
 
-    var CurrentPlayerOnTurn = PlayerSymbol.X
+    private var _fieldsCounterCurrent = -1
+    private var _fieldsCounterMaximal = -1
+
+    private var _currentPlayerOnTurn = PlayerSymbol.None
+
+    fun GetCurrentPlayerOnTurn() = _currentPlayerOnTurn
 
     private fun PlayerTurnChange()
     {
-        CurrentPlayerOnTurn = when(CurrentPlayerOnTurn)
+        _currentPlayerOnTurn = when(_currentPlayerOnTurn)
         {
             PlayerSymbol.X ->  PlayerSymbol.O
             PlayerSymbol.O ->  PlayerSymbol.X
             PlayerSymbol.None ->  PlayerSymbol.X
         }
-        val event = PlayerTurnChangeEvent(CurrentPlayerOnTurn)
+        val event = PlayerTurnChangeEvent(_currentPlayerOnTurn)
 
         callback.OnPlayerTurnChangeEvent(event)
     }
 
     private fun CanPlayerUseNumber(strength : Int) : Boolean
     {
-        return when(CurrentPlayerOnTurn)
+        return when(_currentPlayerOnTurn)
         {
             PlayerSymbol.X -> _playerX.CanUse(strength)
             PlayerSymbol.O -> _playerO.CanUse(strength)
@@ -36,13 +42,53 @@ class TTTGame(val callback : TTTGameListener)
 
     fun Start(width: Int, height: Int)
     {
+        _fieldsCounterMaximal = width * height
+
         _gameField.Setup(width, height)
+
         callback.OnMatchBegin(width, height)
+
+       RoundStart()
+        PlayerTurnChange()
+    }
+
+    private fun CheckWinningConsition() : RoundEndEvent
+    {
+        if(_fieldsCounterCurrent == _fieldsCounterMaximal)
+        {
+            return RoundEndEvent(RoundResult.Draw)
+        }
+
+        val affectedFields = _gameField.GetWinningFields()
+        val hasPlayerWon = affectedFields.isNotEmpty()
+
+        if(hasPlayerWon)
+        {
+            return RoundEndEvent(RoundResult.WinInARaw, affectedFields)
+        }
+
+        return RoundEndEvent(RoundResult.None)
+    }
+
+    private fun RoundStart()
+    {
+        _fieldsCounterCurrent = 0
+
+        _gameField.Reset()
+
+        callback.OnRoundBegin()
+    }
+
+    private fun RoundEnd(roundEndEvent : RoundEndEvent)
+    {
+        callback.OnRoundEnd(roundEndEvent)
+
+        RoundStart()
     }
 
     fun PlayerPlace(gameField: GameField) : PlayerPlaceResult
     {
-        val isHisTurn = CurrentPlayerOnTurn == gameField.Symbol
+        val isHisTurn = _currentPlayerOnTurn == gameField.Symbol
         val playerPlaceResult : PlayerPlaceResult
 
         if(!isHisTurn)
@@ -108,7 +154,16 @@ class TTTGame(val callback : TTTGameListener)
 
                 callback.OnPlayerPlace(gameField)
 
-                PlayerTurnChange()
+                _fieldsCounterCurrent++
+
+                val result = CheckWinningConsition()
+
+                when(result.RoundResult)
+                {
+                    RoundResult.None -> PlayerTurnChange()
+                    RoundResult.Draw -> RoundEnd(result)
+                    RoundResult.WinInARaw -> RoundEnd(result)
+                }
             }
             //-----------------------------------------------
         }

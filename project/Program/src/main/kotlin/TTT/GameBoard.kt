@@ -1,53 +1,54 @@
 package TTT
 
-class GameBoard()
+class GameBoard
 {
-    var width:Int = -1
-    var height:Int = -1
-    private var target:Int = -1
-    private var field = Array(0) {Array(0) { GameField(-1, -1) } }
+    var Width : Int = -1
+    var Height : Int = -1
+    var AmountInARowToWin : Int = -1
+    var FieldList : Array<Array<GameField>> = emptyArray()
 
-    fun Setup(width: Int,height: Int,winnumber:Int)
+    fun Setup(width : Int, height : Int, winnumber : Int = Math.max(width, height))
     {
-        this.width= width
-        this.height=height
-        target=winnumber
-        field = Array(width) {i -> Array(height) { j -> GameField(i, j) } }
-    }
-
-    fun Setup(width: Int,height: Int)
-    {
-        this.width= width
-        this.height=height
-        field = Array(width) {i -> Array(height) { j -> GameField(i, j) } }
+        Width = width
+        Height = height
+        AmountInARowToWin = winnumber
+        FieldList = Array(width) { i -> Array(height) { j -> GameField(i, j) } }
     }
 
     fun IsInField(x : Int, y : Int) : Boolean
     {
-        if(x>width||y>height)
-        {
-            return false
-        }
-        return true
+        return x < Width && y < Height
     }
 
-    fun Get(x : Int, y : Int) : GameField?
+    fun Get(x : Int, y : Int) : GameField
     {
-
-        return field[x][y]
+        return FieldList[x][y]
     }
 
     fun Set(gameField: GameField)
     {
-        field[gameField.x][gameField.y] = gameField
+        FieldList[gameField.x][gameField.y] = gameField
     }
 
-    fun CheckWinningCondition() : List<GameField>
+    fun GetWinningFields() : List<GameField>
     {
         val winningPositions = mutableListOf<GameField>()
 
-
+        // TODO: Get all fields that form a row of atleast (AmountInARowToWin)
 
         return winningPositions
+    }
+
+    fun Reset()
+    {
+        for(element in FieldList)
+        {
+            val row = element
+
+            for(x in FieldList.indices)
+            {
+                row[x].Reset()
+            }
+        }
     }
 }
