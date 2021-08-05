@@ -3,9 +3,11 @@
 Provisorisch: TTT
 
 # Teammitglieder
-- Lukas Momberg
-- Jona Siebel
-- Nico Brenner
+| Name | Martikelnummer | Studiengang |
+|------|----------------|-------------|
+| Lukas Momberg | 11141259 | AI | 
+| Jona Siebel | 11141394 | AI |
+| Nico Brenner | 11096415 | MI |
 
 # Featureliste
 | Feature | implementiert von.. |
