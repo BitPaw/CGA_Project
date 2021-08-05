@@ -1,6 +1,7 @@
 package cga.exercise.game
 
 import Resource.Pillar
+import Resource.PlayerMoveMenu
 import Resource.Skybox
 import Resource.SpriteFont.SpriteFont
 import Resource.Text
@@ -25,34 +26,30 @@ import org.lwjgl.opengl.GL33C
 
 class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 {
+    //-----<Variables>--------------------------------------------------------------------------------------------------
     private val _game = TTTGame(this)
     private val _camera = TTTCamera(90f, window.windowWidth.toFloat()/window.windowHeight.toFloat())
 
-    private val shaderHUD: ShaderProgram = ShaderProgram("assets/TTT/Shader/HUD_Vertex.glsl", "assets/TTT/Shader/HUD_Fragment.glsl")
-    private val shaderWorld: ShaderProgram = ShaderProgram("assets/TTT/Shader/WorldShader_Vertex.glsl", "assets/TTT/Shader/WorldShader_Fragment.glsl")
+    private val cube =  ModelLoader.loadModel("assets/TTT/Model/Pillar.obj", 0f, toRadians(0f),0f)!!
+    private val _blockPlaceable = ModelLoader.loadModel("assets/TTT/Model/Placeable.obj", 0f, toRadians(0f),0f)!!
+    private val rectangle = ModelLoader.loadModel("assets/TTT/Model/Recangle.obj", 0f, toRadians(0f),0f)!!
 
-    private val cube =  ModelLoader.loadModel("assets/TTT/Model/Pillar.obj", 0f, toRadians(0f),0f)!!;
-    private val rectangle = ModelLoader.loadModel("assets/TTT/Model/Recangle.obj", 0f, toRadians(0f),0f)!!;
-    private val _blockPlaceable = ModelLoader.loadModel("assets/TTT/Model/Placeable.obj", 0f, toRadians(0f),0f)!!;
-
-    // Actual, Scene
-    private val fieldList = mutableListOf<Pillar>()
-
-    private val missingTexture =  Texture2D("assets/TTT/Texture/MissingTexture.png", true)
-    private val brickTexture = Texture2D("assets/TTT/Texture/Brick.png", true)
     private val playerX = Texture2D("assets/TTT/Texture/X.png", true)
     private val playerO = Texture2D("assets/TTT/Texture/O.png", true)
+    private val missingTexture =  Texture2D("assets/TTT/Texture/MissingTexture.png", true)
+    private val brickTexture = Texture2D("assets/TTT/Texture/Brick.png", true)
+    private val _crossTexture = Texture2D("assets/TTT/Texture/Cross.png", true)
 
-    //----<UI>-----------
-    private val _font = SpriteFont("assets/TTT/Font/segoe.fnt")
-    private val _score = Text()
-    private val _currentTurn = Text()
+    private val shaderHUD: ShaderProgram = ShaderProgram("assets/TTT/Shader/HUD_Vertex.glsl", "assets/TTT/Shader/HUD_Fragment.glsl")
+    private val shaderWorld: ShaderProgram = ShaderProgram("assets/TTT/Shader/WorldShader_Vertex.glsl", "assets/TTT/Shader/WorldShader_Fragment.glsl")
 
     private val _cross = Renderable(rectangle.MeshList)
 
     private val mousePositionCurrent = Vector2d(0.0, 0.0)
     private val mousePositionDelta = Vector2d(0.0, 0.0)
+    //------------------------------------------------------------------------------------------------------------------
 
+    //-----<Map>--------------------------------------------------------------------------------------------------------
     private val _skybox = Skybox(
         "assets/TTT/Shader/SkyBox_Vertex.glsl",
         "assets/TTT/Shader/SkyBox_Fragment.glsl",
@@ -64,6 +61,27 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         "assets/TTT/Texture/SkyBox/Back.png",
         "assets/TTT/Texture/SkyBox/Front.png"
     )
+
+    private val fieldList = mutableListOf<Pillar>()
+    //------------------------------------------------------------------------------------------------------------------
+
+    //-----<UI>---------------------------------------------------------------------------------------------------------
+    private val _font = SpriteFont("assets/TTT/Font/segoe.fnt")
+    private val _score = Text()
+    private val _currentTurn = Text()
+    //------------------------------------------------------------------------------------------------------------------
+
+    //-----<Linker X-Menu>----------------------------------------------------------------------------------------------
+    private val x0 = Texture2D("assets/TTT/Texture/X.png", true)
+    private val x1 = Texture2D("assets/TTT/Texture/X_1.png", true)
+    private val x2 = Texture2D("assets/TTT/Texture/X_2.png", true)
+    private val x3 = Texture2D("assets/TTT/Texture/X_3.png", true)
+    private val x4 = Texture2D("assets/TTT/Texture/X_4.png", true)
+    private val x5 = Texture2D("assets/TTT/Texture/X_5.png", true)
+    private val x6 = Texture2D("assets/TTT/Texture/X_6.png", true)
+    private val playerMenuLeft = PlayerMoveMenu(rectangle, x0, x1, x2, x3, x4, x5, x6)
+    //------------------------------------------------------------------------------------------------------------------
+
 
     init
     {
@@ -89,8 +107,10 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _score.FontSet(_font)
         _score.TextSet("Fight Ligma")
 
+        playerMenuLeft.Move(-5.0f, -4.5f, 0f)
 
-        _currentTurn.translateLocal(-0.5f, -0.4f, -1f)
+
+        _currentTurn.translateLocal(0.3f, -0.6f, -1f)
         _currentTurn.scaleLocal(0.5f)
         _currentTurn.FontSet(_font)
         _currentTurn.TextSet("Turn:")
@@ -101,7 +121,6 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         rectangle.translateLocal(Vector3f(-1f, -1f, -1f))
         rectangle.scaleLocal(0.3f);
         //rectangle.meshList[0].RenderMode = GL33C.GL_QUADS
-        rectangle.MeshList[0].material?.emit = Texture2D("assets/TTT/Texture/X.png", true)
 
         _camera.translateGlobal(Vector3f(0f, 3f, 6f))
         _camera.rotateLocal(toRadians(-35f), 0f, 0f)
@@ -110,7 +129,6 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _skybox.Cube?.scaleLocal(100f);
 
 
-        _cross.MeshList[0].material?.emit = Texture2D("assets/TTT/Texture/Cross.png", true)
         _cross.scaleLocal(00.1f)
         _cross.translateLocal(-0.5f, -0.5f, -2f)
     }
@@ -151,10 +169,11 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.ThirdDimension = false
         _camera.IgnoreTranslation = true
         _camera.bind(shaderHUD)
-        rectangle.render(shaderHUD)
+        _cross.MeshList[0].material.emit = _crossTexture
         _cross.render(shaderHUD)
         _score.render(shaderHUD)
         _currentTurn.render(shaderHUD)
+        playerMenuLeft.Render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
     }
 

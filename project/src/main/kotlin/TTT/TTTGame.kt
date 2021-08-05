@@ -3,6 +3,11 @@ package TTT
 import TTT.Event.PlayerPlaceEvent
 import TTT.Event.PlayerTurnChangeEvent
 import TTT.Event.RoundEndEvent
+import java.sql.Time
+import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.schedule
 
 class TTTGame(val callback : TTTGameListener)
 {
@@ -83,7 +88,27 @@ class TTTGame(val callback : TTTGameListener)
     {
         callback.OnRoundEnd(roundEndEvent)
 
-        RoundStart()
+
+        // TODO: Here is no delay, a bit too fast
+
+        /*
+        Timer().schedule(500)
+        {
+            RoundStart()
+        }*/
+
+        /*
+        Executors.newSingleThreadScheduledExecutor().schedule(
+            {
+            //RoundStart()
+                println("\n\n\nRESET\n" +
+                        "\n" +
+                        "\n")
+        },  500, TimeUnit.MILLISECONDS)
+*/
+
+
+       RoundStart()
     }
 
     fun PlayerPlace(gameField: GameField) : PlayerPlaceResult

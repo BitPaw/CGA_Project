@@ -115,6 +115,11 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
         modelMatrix.translate(deltaPos) // M*T
     }
 
+    fun translateLocal(x : Float, y : Float)
+    {
+        translateLocal(Vector3f(x, y, 0f)) // M*T
+    }
+
     fun translateLocal(x : Float, y : Float, z : Float)
     {
         translateLocal(Vector3f(x, y, z)) // M*T
