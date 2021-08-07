@@ -16,11 +16,15 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      */
     fun rotateLocal(pitch: Float, yaw: Float, roll: Float)
     {
-        modelMatrix.rotateXYZ(pitch, yaw, roll)
+        val x = toRadians(pitch.toDouble()).toFloat()
+        val y = toRadians(yaw.toDouble()).toFloat()
+        val z = toRadians(roll.toDouble()).toFloat()
+
+        modelMatrix.rotateXYZ(x, y, z)
     }
     fun rotateLocal(rotation : Vector3f)
     {
-        modelMatrix.rotateXYZ(rotation.x, rotation.y, rotation.z)
+        rotateLocal(rotation.x, rotation.y, rotation.z)
     }
     fun rotateLocalCappedYZ(pitch: Float, yaw: Float, roll: Float)
     {

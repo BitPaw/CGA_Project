@@ -11,7 +11,7 @@ class Material(var emit: Texture2D? = null,
                var specular: Texture2D? = null,
                var shininess: Float = 50.0f,
                var tcMultiplier : Vector2f = Vector2f(1.0f),
-                val color : Vector3f = Vector3f(1f,1f,1f)
+               var color : Vector3f = Vector3f(1f,1f,1f)
 )
 
 {

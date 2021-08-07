@@ -45,9 +45,9 @@ class TTTGame(val callback : TTTGameListener)
         }
     }
 
-    fun Start(width: Int, height: Int)
+    fun Start(width: Int, height: Int, userMoves : Int)
     {
-        _fieldsCounterMaximal = width * height
+        _fieldsCounterMaximal = userMoves * 2
 
         _gameField.Setup(width, height)
 

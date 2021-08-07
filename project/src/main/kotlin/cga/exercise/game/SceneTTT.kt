@@ -34,8 +34,6 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val _blockPlaceable = ModelLoader.loadModel("assets/TTT/Model/Placeable.obj", 0f, toRadians(0f),0f)!!
     private val rectangle = ModelLoader.loadModel("assets/TTT/Model/Recangle.obj", 0f, toRadians(0f),0f)!!
 
-    private val playerX = Texture2D("assets/TTT/Texture/X.png", true)
-    private val playerO = Texture2D("assets/TTT/Texture/O.png", true)
     private val missingTexture =  Texture2D("assets/TTT/Texture/MissingTexture.png", true)
     private val brickTexture = Texture2D("assets/TTT/Texture/Brick.png", true)
     private val _crossTexture = Texture2D("assets/TTT/Texture/Cross.png", true)
@@ -94,7 +92,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     init
     {
-        _game.Start(3,3)
+        _game.Start(3,3, 6)
 
         GL11.glClearColor(0.6f, 0.6f, 0.6f, 1.0f); GLError.checkThrow()
         //GL11.glClearColor(0.10f, 0.10f, 0.10f, 1.0f); GLError.checkThrow()
@@ -111,7 +109,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
 
        // _score.modelMatrix.scale(1f)
-        _score.translateLocal(-0.5f, 0.4f, -1f)
+        _score.translateLocal(-0.65f, 0.6f, -1f)
         _score.scaleLocal(0.5f)
         _score.FontSet(_font)
         _score.TextSet("Fight Ligma")
@@ -132,7 +130,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         //rectangle.meshList[0].RenderMode = GL33C.GL_QUADS
 
         _camera.translateGlobal(Vector3f(0f, 3f, 6f))
-        _camera.rotateLocal(toRadians(-35f), 0f, 0f)
+        _camera.rotateLocal(-35f, 0f, 0f)
 
         //cube.translateLocal(0.5f,0.5f,0.5f)
         _skybox.Cube?.scaleLocal(100f);
@@ -183,6 +181,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.ThirdDimension = false
         _camera.IgnoreTranslation = true
         _camera.bind(shaderHUD)
+        _cross.MeshList[0].material.color.set(1f, 1f, 1f)
         _cross.MeshList[0].material.emit = _crossTexture
         _cross.render(shaderHUD)
         _score.render(shaderHUD)
@@ -299,7 +298,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     {
         val firstMove = mousePositionDelta.x == -1.0 && mousePositionDelta.y == -1.0
         val newPos = Vector2d(xpos, ypos)
-        val viewSpeed = 0.005f
+        val viewSpeed = 0.3f
 
         mousePositionDelta.set(newPos)
         mousePositionDelta.sub(mousePositionCurrent)
@@ -337,7 +336,10 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun OnRoundBegin()
     {
-        _score.TextSet("NEW ROUND")
+        _score.TextSet("Move: New Round")
+
+        _playerMenuLeft.ElementResetAll()
+        _playerMenuRight.ElementResetAll()
 
         fieldList.forEach{element -> element.Field.Reset() }
     }
@@ -349,7 +351,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun OnMatchBegin(width : Int, height : Int)
     {
-        println("<Event: Match begin> Width:$width Height:$height")
+        println("[Event] Match begin> Width:$width Height:$height")
 
         //-----<Build Field>--------------------------------------------------------------------------------------------
         val gapBetween = 3.5f
@@ -368,7 +370,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
                 newObject.translateLocal(newPosition)
                 newBlock.translateLocal(newPosition)
-                newBlock.translateLocal(0f, 3.3f, 0f)
+                newBlock.translateLocal(0f, 3.5f, 0f)
+                newBlock.rotateLocal(180f, 180f, 0f)
 
                 fieldList.add(rr)
             }
@@ -378,7 +381,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun OnPlayerInteract(playerPlaceEvent: PlayerPlaceEvent)
     {
-        _score.TextSet(playerPlaceEvent.result.toString())
+        _score.TextSet("Move: " + playerPlaceEvent.result.toString())
 
         /*
 
@@ -405,13 +408,13 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
             PlayerSymbol.None -> TODO()
             PlayerSymbol.X ->
             {
-                _playerMenuLeft.IsActive = true
-                _playerMenuRight.IsActive = false
+                _playerMenuLeft.SetActive(true)
+                _playerMenuRight.SetActive( false)
             }
             PlayerSymbol.O ->
             {
-                _playerMenuLeft.IsActive = false
-                 _playerMenuRight.IsActive = true
+                _playerMenuLeft.SetActive( false)
+                 _playerMenuRight.SetActive(true)
 
             }
         }
@@ -459,6 +462,13 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         fieldList[index].Field.Symbol = gameField.Symbol
         fieldList[index].Field.Strength = gameField.Strength
+
+        when(gameField.Symbol)
+        {
+            PlayerSymbol.None -> TODO()
+            PlayerSymbol.X -> _playerMenuLeft.ElementLock(gameField.Strength)
+            PlayerSymbol.O -> _playerMenuRight.ElementLock(gameField.Strength)
+        }
     }
 
     //------------------------------------------------------------------------------------------------------------------

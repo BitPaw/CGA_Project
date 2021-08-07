@@ -18,16 +18,16 @@ class PlayerMoveMenu(
     val Six: Texture2D
     )
 {
-    val Element0 = Renderable(rectangle.MeshList)
-    val Element1 = Renderable(rectangle.MeshList)
-    val Element2 = Renderable(rectangle.MeshList)
-    val Element3 = Renderable(rectangle.MeshList)
-    val Element4 = Renderable(rectangle.MeshList)
-    val Element5 = Renderable(rectangle.MeshList)
-    val Element6 = Renderable(rectangle.MeshList)
+    val Element0 = PlayerMoveElement(Renderable(rectangle.MeshList), Zero)
+    val Element1 = PlayerMoveElement(Renderable(rectangle.MeshList), One)
+    val Element2 = PlayerMoveElement(Renderable(rectangle.MeshList), Two)
+    val Element3 = PlayerMoveElement(Renderable(rectangle.MeshList), Three)
+    val Element4 = PlayerMoveElement(Renderable(rectangle.MeshList), Four)
+    val Element5 = PlayerMoveElement(Renderable(rectangle.MeshList), Five)
+    val Element6 = PlayerMoveElement(Renderable(rectangle.MeshList), Six)
 
-    var IsActive = false
-    var CurrentlySelected = 1;
+    private var _isActive = false
+    var CurrentlySelected = 0
 
     init
     {
@@ -35,66 +35,91 @@ class PlayerMoveMenu(
         val scaleMegre = 0.35f
 
         //Element0.translateLocal(0.3f,-1f)
-        Element1.translateLocal(0.3f * scaleMegre,-0.5f* scaleMegre)
-        Element2.translateLocal(0.6f* scaleMegre,0f* scaleMegre)
-        Element3.translateLocal(0.3f* scaleMegre,0.5f* scaleMegre)
-        Element4.translateLocal(-0.3f* scaleMegre,0.5f* scaleMegre)
-        Element5.translateLocal(-0.6f* scaleMegre,0f* scaleMegre)
-        Element6.translateLocal(-0.3f* scaleMegre,-0.5f* scaleMegre)
+        Element1.Element.translateLocal(0.3f * scaleMegre,-0.5f* scaleMegre)
+        Element2.Element.translateLocal(0.6f* scaleMegre,0f* scaleMegre)
+        Element3.Element.translateLocal(0.3f* scaleMegre,0.5f* scaleMegre)
+        Element4.Element.translateLocal(-0.3f* scaleMegre,0.5f* scaleMegre)
+        Element5.Element.translateLocal(-0.6f* scaleMegre,0f* scaleMegre)
+        Element6.Element.translateLocal(-0.3f* scaleMegre,-0.5f* scaleMegre)
 
+        // maybe use Parents?
 
-        Element0.scaleLocal(scale)
-        Element1.scaleLocal(scale)
-        Element2.scaleLocal(scale)
-        Element3.scaleLocal(scale)
-        Element4.scaleLocal(scale)
-        Element5.scaleLocal(scale)
-        Element6.scaleLocal(scale)
+        Element0.Element.scaleLocal(scale)
+        Element1.Element.scaleLocal(scale)
+        Element2.Element.scaleLocal(scale)
+        Element3.Element.scaleLocal(scale)
+        Element4.Element.scaleLocal(scale)
+        Element5.Element.scaleLocal(scale)
+        Element6.Element.scaleLocal(scale)
     }
 
     fun Move(x : Float, y : Float, z : Float)
     {
-        Element0.translateLocal(x, y, z)
-        Element1.translateLocal(x, y, z)
-        Element2.translateLocal(x, y, z)
-        Element3.translateLocal(x, y, z)
-        Element4.translateLocal(x, y, z)
-        Element5.translateLocal(x, y, z)
-        Element6.translateLocal(x, y, z)
+        Element0.Element.translateLocal(x, y, z)
+        Element1.Element.translateLocal(x, y, z)
+        Element2.Element.translateLocal(x, y, z)
+        Element3.Element.translateLocal(x, y, z)
+        Element4.Element.translateLocal(x, y, z)
+        Element5.Element.translateLocal(x, y, z)
+        Element6.Element.translateLocal(x, y, z)
+    }
+
+    fun SetActive(mode : Boolean)
+    {
+        Element0.Locked = !mode
+        Element1.Locked = !mode
+        Element2.Locked = !mode
+        Element3.Locked = !mode
+        Element4.Locked = !mode
+        Element5.Locked = !mode
+        Element6.Locked = !mode
+
+        if(mode)
+        {
+            SelectUp()
+        }
     }
 
     fun Render(shaderProgram: ShaderProgram)
     {
-        SelectColor(0)
-        Element0.MeshList[0].material.emit = Zero
-        Element0.render(shaderProgram)
-
-        SelectColor(1)
-        Element1.MeshList[0].material.emit = One
-        Element1.render(shaderProgram)
-
-        SelectColor(2)
-        Element2.MeshList[0].material.emit = Two
-        Element2.render(shaderProgram)
-
-        SelectColor(3)
-        Element3.MeshList[0].material.emit = Three
-        Element3.render(shaderProgram)
-
-        SelectColor(4)
-        Element4.MeshList[0].material.emit = Four
-        Element4.render(shaderProgram)
-
-        SelectColor(5)
-        Element5.MeshList[0].material.emit = Five
-        Element5.render(shaderProgram)
-
-        SelectColor(6)
-        Element6.MeshList[0].material.emit = Six
-        Element6.render(shaderProgram)
+        Element0.Render(shaderProgram)
+        Element1.Render(shaderProgram)
+        Element2.Render(shaderProgram)
+        Element3.Render(shaderProgram)
+        Element4.Render(shaderProgram)
+        Element5.Render(shaderProgram)
+        Element6.Render(shaderProgram)
     }
 
-    private fun GetElement(index : Int) : Renderable
+    fun ElementLock(index : Int)
+    {
+        GetElement(index).UsedUp = true
+    }
+
+    fun ElementResetAll()
+    {
+        Element0.Selected = false
+        Element1.Selected = false
+        Element2.Selected = false
+        Element3.Selected = false
+        Element4.Selected = false
+        Element5.Selected = false
+        Element6.Selected = false
+
+        Element0.UsedUp = false
+        Element1.UsedUp = false
+        Element2.UsedUp = false
+        Element3.UsedUp = false
+        Element4.UsedUp = false
+        Element5.UsedUp = false
+        Element6.UsedUp = false
+
+        CurrentlySelected = 0
+
+        SelectUp()
+    }
+
+    private fun GetElement(index : Int) : PlayerMoveElement
     {
         return when(index)
         {
@@ -109,50 +134,47 @@ class PlayerMoveMenu(
         }
     }
 
-    private val colorSelected = Vector3f(1f, 1f, 0f)
-    private val colorDefault = Vector3f(1f, 1f, 1f)
-    private val colorInActive = Vector3f(-0.5f, -0.5f, -0.5f)
-
-
-    private fun SelectColor(index : Int)
-    {
-        val highlightColor = CurrentlySelected == index
-
-        if(IsActive)
-        {
-            if(highlightColor)
-            {
-                GetElement(index).MeshList[0].material.color.set(colorSelected)
-            }
-            else
-            {
-                GetElement(index).MeshList[0].material.color.set(colorDefault)
-            }
-        }
-        else
-        {
-            GetElement(index).MeshList[0].material.color.set(colorInActive)
-        }
-    }
-
     fun SelectUp()
     {
-        CurrentlySelected = (++CurrentlySelected % 7)
-        if(CurrentlySelected == 0)
+        GetElement(CurrentlySelected).Selected = false
+
+        while(true)
         {
-            CurrentlySelected++
+            CurrentlySelected = (++CurrentlySelected % 7)
+
+            if(CurrentlySelected == 0)
+            {
+                CurrentlySelected++
+            }
+
+            if(!GetElement(CurrentlySelected).UsedUp)
+            {
+                break
+            }
         }
 
+        GetElement(CurrentlySelected).Selected = true
     }
 
     fun SelectDown()
     {
-        CurrentlySelected = (--CurrentlySelected % 7)
+        GetElement(CurrentlySelected).Selected = false
 
-        if(CurrentlySelected < 1)
+        while(true)
         {
-            CurrentlySelected = 6
+            CurrentlySelected = (--CurrentlySelected % 7)
+
+            if(CurrentlySelected < 1)
+            {
+                CurrentlySelected = 6
+            }
+
+            if(!GetElement(CurrentlySelected).UsedUp)
+            {
+                break
+            }
         }
 
+        GetElement(CurrentlySelected).Selected = true
     }
 }
