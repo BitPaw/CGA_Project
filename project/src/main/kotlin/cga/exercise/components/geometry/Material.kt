@@ -19,7 +19,7 @@ class Material(var emit: Texture2D? = null,
     fun bind(shaderProgram: ShaderProgram)
     {
 
-        if(emit!!.texID >= 0)
+        if(emit?.texID!! >= 0)
         {
             emit!!.bind(0)
         }

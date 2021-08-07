@@ -152,6 +152,10 @@ class SceneCycle(private val window: GameWindow) : Scene
     }
 
     override  fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
+    override fun OnScroll(xoffset: Double, yoffset: Double)
+    {
+       // TODO("Not yet implemented")
+    }
 
     override  fun onMouseMove(xpos: Double, ypos: Double)
     {

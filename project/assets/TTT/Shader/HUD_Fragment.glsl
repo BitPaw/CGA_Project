@@ -17,9 +17,14 @@ void main()
 {
     vec4 recolor = texture(textureEmissive, vertexData.TexturePosition);
 
-    if(recolor.xyz == vec3(175/255f, 0f, 1f) ||recolor.xyz == vec3(0f, 0f, 0f))
+    if(recolor.xyz == vec3(1f, 1f, 1f))
     {
         discard;
+    }
+
+    if(materialColor != vec3(1f, 1f, 1f))
+    {
+        recolor = vec4(materialColor + recolor.xyz, recolor.w);
     }
 
     ResultColor = recolor;

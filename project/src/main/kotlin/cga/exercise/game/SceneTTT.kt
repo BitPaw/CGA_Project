@@ -71,15 +71,24 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val _currentTurn = Text()
     //------------------------------------------------------------------------------------------------------------------
 
-    //-----<Linker X-Menu>----------------------------------------------------------------------------------------------
-    private val x0 = Texture2D("assets/TTT/Texture/X.png", true)
-    private val x1 = Texture2D("assets/TTT/Texture/X_1.png", true)
-    private val x2 = Texture2D("assets/TTT/Texture/X_2.png", true)
-    private val x3 = Texture2D("assets/TTT/Texture/X_3.png", true)
-    private val x4 = Texture2D("assets/TTT/Texture/X_4.png", true)
-    private val x5 = Texture2D("assets/TTT/Texture/X_5.png", true)
-    private val x6 = Texture2D("assets/TTT/Texture/X_6.png", true)
-    private val playerMenuLeft = PlayerMoveMenu(rectangle, x0, x1, x2, x3, x4, x5, x6)
+    //-----<Menu>----------------------------------------------------------------------------------------------
+    private val _x0 = Texture2D("assets/TTT/Texture/X.png", true, false)
+    private val _x1 = Texture2D("assets/TTT/Texture/X_1.png", true, false)
+    private val _x2 = Texture2D("assets/TTT/Texture/X_2.png", true, false)
+    private val _x3 = Texture2D("assets/TTT/Texture/X_3.png", true, false)
+    private val _x4 = Texture2D("assets/TTT/Texture/X_4.png", true, false)
+    private val _x5 = Texture2D("assets/TTT/Texture/X_5.png", true, false)
+    private val _x6 = Texture2D("assets/TTT/Texture/X_6.png", true, false)
+    private val _playerMenuLeft = PlayerMoveMenu(rectangle, _x0, _x1, _x2, _x3, _x4, _x5, _x6)
+
+    private val _o0 = Texture2D("assets/TTT/Texture/O.png", true, false)
+    private val _o1 = Texture2D("assets/TTT/Texture/O_1.png", true, false)
+    private val _o2 = Texture2D("assets/TTT/Texture/O_2.png", true, false)
+    private val _o3 = Texture2D("assets/TTT/Texture/O_3.png", true, false)
+    private val _o4 = Texture2D("assets/TTT/Texture/O_4.png", true, false)
+    private val _o5 = Texture2D("assets/TTT/Texture/O_5.png", true, false)
+    private val _o6 = Texture2D("assets/TTT/Texture/O_6.png", true, false)
+    private val _playerMenuRight = PlayerMoveMenu(rectangle, _o0, _o1, _o2, _o3, _o4, _o5, _o6)
     //------------------------------------------------------------------------------------------------------------------
 
 
@@ -107,8 +116,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _score.FontSet(_font)
         _score.TextSet("Fight Ligma")
 
-        playerMenuLeft.Move(-5.0f, -4.5f, 0f)
-
+        _playerMenuLeft.Move(-5.0f, -4.5f, 0f)
+        _playerMenuRight.Move(3.5f, 3.5f, 0f)
 
         _currentTurn.translateLocal(0.3f, -0.6f, -1f)
         _currentTurn.scaleLocal(0.5f)
@@ -160,7 +169,12 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.ThirdDimension = true
         _camera.IgnoreTranslation = false
         _camera.bind(shaderWorld)
-        fieldList.forEach{element -> element.Render(shaderWorld, playerX, playerO)}
+
+        fieldList.forEach{element ->
+            val texture = TextureLookUp(element.Field.Symbol, element.Field.Strength)
+
+            element.Render(shaderWorld, texture)
+        }
         //_score.render(shaderWorld)
         //--------------------------------------------------------------------------------------------------------------
 
@@ -173,7 +187,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _cross.render(shaderHUD)
         _score.render(shaderHUD)
         _currentTurn.render(shaderHUD)
-        playerMenuLeft.Render(shaderHUD)
+        _playerMenuLeft.Render(shaderHUD)
+        _playerMenuRight.Render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
     }
 
@@ -228,6 +243,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
     {
+
         if(GLFW.GLFW_PRESS == action) // OnPressDown
         {
             val field = Vector2i(-1, -1)
@@ -247,10 +263,35 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
             if(field != Vector2i(-1, -1))
             {
-                val gameField = GameField(field.x, field.y, _game.GetCurrentPlayerOnTurn(), 10)
+                val playerMenu = GetCurrentPlayerMenu()
+                val gameField = GameField(field.x, field.y, _game.GetCurrentPlayerOnTurn(), playerMenu.CurrentlySelected)
 
                 _game.PlayerPlace(gameField)
             }
+        }
+    }
+
+    private fun GetCurrentPlayerMenu() : PlayerMoveMenu
+    {
+        return when(_game.GetCurrentPlayerOnTurn())
+        {
+            PlayerSymbol.None -> TODO()
+            PlayerSymbol.X -> _playerMenuLeft
+            PlayerSymbol.O -> _playerMenuRight
+        }
+    }
+
+    override fun OnScroll(xoffset: Double, yoffset: Double)
+    {
+        val playerMenu = GetCurrentPlayerMenu()
+
+        if(yoffset > 0)
+        {
+            playerMenu.SelectUp()
+        }
+        else
+        {
+            playerMenu.SelectDown()
         }
     }
 
@@ -358,20 +399,66 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     override fun OnPlayerTurnChangeEvent(playerTurnChangeEvent: PlayerTurnChangeEvent)
     {
         _currentTurn.TextSet("Turn: " + playerTurnChangeEvent.playerSymbol.toString())
+
+        when(playerTurnChangeEvent.playerSymbol)
+        {
+            PlayerSymbol.None -> TODO()
+            PlayerSymbol.X ->
+            {
+                _playerMenuLeft.IsActive = true
+                _playerMenuRight.IsActive = false
+            }
+            PlayerSymbol.O ->
+            {
+                _playerMenuLeft.IsActive = false
+                 _playerMenuRight.IsActive = true
+
+            }
+        }
+    }
+
+    private fun TextureLookUp(symbol: PlayerSymbol, strength : Int) : Texture2D?
+    {
+        return when(symbol)
+        {
+            PlayerSymbol.None -> null
+            PlayerSymbol.X ->
+            {
+                when(strength)
+                {
+                    0-> null
+                    1-> _x1
+                    2-> _x2
+                    3-> _x3
+                    4-> _x4
+                    5-> _x5
+                    6-> _x6
+                    else -> throw Exception("$strength")
+                }
+            }
+            PlayerSymbol.O ->
+            {
+                when(strength)
+                {
+                    0-> null
+                    1-> _o1
+                    2-> _o2
+                    3-> _o3
+                    4-> _o4
+                    5-> _o5
+                    6-> _o6
+                    else -> throw Exception("$strength")
+                }
+            }
+        }
     }
 
     override fun OnPlayerPlace(gameField: GameField)
     {
         val index = gameField.x + (gameField.y * 3)
 
-        val texture = when(gameField.Symbol)
-        {
-            PlayerSymbol.None -> throw Exception()
-            PlayerSymbol.X -> playerX
-            PlayerSymbol.O -> playerO
-        }
-
         fieldList[index].Field.Symbol = gameField.Symbol
+        fieldList[index].Field.Strength = gameField.Strength
     }
 
     //------------------------------------------------------------------------------------------------------------------

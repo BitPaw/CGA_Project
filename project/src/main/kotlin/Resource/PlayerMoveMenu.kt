@@ -5,6 +5,7 @@ import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2d
 import org.joml.Vector3f
+import java.lang.Exception
 
 class PlayerMoveMenu(
     rectangle: Renderable,
@@ -24,6 +25,9 @@ class PlayerMoveMenu(
     val Element4 = Renderable(rectangle.MeshList)
     val Element5 = Renderable(rectangle.MeshList)
     val Element6 = Renderable(rectangle.MeshList)
+
+    var IsActive = false
+    var CurrentlySelected = 1;
 
     init
     {
@@ -61,25 +65,94 @@ class PlayerMoveMenu(
 
     fun Render(shaderProgram: ShaderProgram)
     {
+        SelectColor(0)
         Element0.MeshList[0].material.emit = Zero
         Element0.render(shaderProgram)
 
+        SelectColor(1)
         Element1.MeshList[0].material.emit = One
         Element1.render(shaderProgram)
 
+        SelectColor(2)
         Element2.MeshList[0].material.emit = Two
         Element2.render(shaderProgram)
 
+        SelectColor(3)
         Element3.MeshList[0].material.emit = Three
         Element3.render(shaderProgram)
 
+        SelectColor(4)
         Element4.MeshList[0].material.emit = Four
         Element4.render(shaderProgram)
 
+        SelectColor(5)
         Element5.MeshList[0].material.emit = Five
         Element5.render(shaderProgram)
 
+        SelectColor(6)
         Element6.MeshList[0].material.emit = Six
         Element6.render(shaderProgram)
+    }
+
+    private fun GetElement(index : Int) : Renderable
+    {
+        return when(index)
+        {
+            0 -> Element0
+            1 -> Element1
+            2 -> Element2
+            3 -> Element3
+            4 -> Element4
+            5 -> Element5
+            6 -> Element6
+            else -> throw Exception("$index")
+        }
+    }
+
+    private val colorSelected = Vector3f(1f, 1f, 0f)
+    private val colorDefault = Vector3f(1f, 1f, 1f)
+    private val colorInActive = Vector3f(-0.5f, -0.5f, -0.5f)
+
+
+    private fun SelectColor(index : Int)
+    {
+        val highlightColor = CurrentlySelected == index
+
+        if(IsActive)
+        {
+            if(highlightColor)
+            {
+                GetElement(index).MeshList[0].material.color.set(colorSelected)
+            }
+            else
+            {
+                GetElement(index).MeshList[0].material.color.set(colorDefault)
+            }
+        }
+        else
+        {
+            GetElement(index).MeshList[0].material.color.set(colorInActive)
+        }
+    }
+
+    fun SelectUp()
+    {
+        CurrentlySelected = (++CurrentlySelected % 7)
+        if(CurrentlySelected == 0)
+        {
+            CurrentlySelected++
+        }
+
+    }
+
+    fun SelectDown()
+    {
+        CurrentlySelected = (--CurrentlySelected % 7)
+
+        if(CurrentlySelected < 1)
+        {
+            CurrentlySelected = 6
+        }
+
     }
 }

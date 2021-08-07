@@ -1,6 +1,7 @@
 package cga.exercise.game
 
 import cga.framework.GameWindow
+import org.lwjgl.glfw.GLFW
 
 /*
   Created by Fabian on 16.09.2017.
@@ -24,6 +25,11 @@ class Game(width: Int,
     override fun update(dt: Float, t: Float) = scene.update(dt, t)
 
     override fun render(dt: Float, t: Float) = scene.render(dt, t)
+
+    override fun onMouseScroll(xoffset: Double, yoffset: Double)
+    {
+        scene.OnScroll(xoffset, yoffset)
+    }
 
     override fun onMouseMove(xpos: Double, ypos: Double) = scene.onMouseMove(xpos, ypos)
 
