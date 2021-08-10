@@ -16,6 +16,7 @@ Provisorisch: TTT
 | SpriteFont(.FNT) Support | Lukas Momberg |
 | Game Rules | Jona Siebel |
 | Raycasting research | Jona Siebel |
+| Modellierung | Nico Brenner |
 
 # Bilder
 ![Image](./images/005.png)
