@@ -15,6 +15,7 @@ Provisorisch: TTT
 | EventSystem | Lukas Momberg |
 | SpriteFont(.FNT) Support | Lukas Momberg |
 | Game Rules | Jona Siebel |
+| Raycasting research | Jona Siebel |
 
 # Bilder
 ![Image](./images/005.png)
