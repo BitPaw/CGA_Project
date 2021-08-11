@@ -15,11 +15,8 @@ import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
+import org.joml.*
 import org.joml.Math.toRadians
-import org.joml.Vector2d
-import org.joml.Vector2f
-import org.joml.Vector2i
-import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL33C
@@ -189,6 +186,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _playerMenuLeft.Render(shaderHUD)
         _playerMenuRight.Render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
+
+        println(" "+RayCastAtCenter()+" ")
     }
 
     override fun update(dt: Float, t: Float)
@@ -278,6 +277,18 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
             PlayerSymbol.X -> _playerMenuLeft
             PlayerSymbol.O -> _playerMenuRight
         }
+    }
+
+    private fun RayCastAtCenter() : Vector3f
+    {
+        val clipcords = Vector4f(0f,0f,-1f,1f)
+        val invertedPro = Matrix4f().invert(_camera.getCalculateProjectionMatrix())
+        val transformadPro = invertedPro.transform(clipcords)
+        var transformatedPro = Vector4f(Vector2f(transformadPro.x,transformadPro.y),-1f,0f)
+        val invertedView = Matrix4f().invert(_camera.getCalculateViewMatrix())
+        var transformatedView = invertedView.transform(transformatedPro)
+        val worldray = Vector3f(transformatedView.x, transformatedView.y,transformatedView.z)
+        return worldray
     }
 
     override fun OnScroll(xoffset: Double, yoffset: Double)
