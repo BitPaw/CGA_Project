@@ -187,7 +187,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _playerMenuRight.Render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
 
-        println(" "+RayCastAtCenter()+" ")
+        println(DoISeeThat(fieldList))
     }
 
     override fun update(dt: Float, t: Float)
@@ -281,14 +281,38 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     private fun RayCastAtCenter() : Vector3f
     {
-        val clipcords = Vector4f(0f,0f,-1f,1f)
+        val view = Vector3f()
+        _camera.getCalculateViewMatrix().getRow(2,view)
+        /*val clipcords = Vector4f(0f,0f,-1f,1f)
         val invertedPro = Matrix4f().invert(_camera.getCalculateProjectionMatrix())
         val transformadPro = invertedPro.transform(clipcords)
-        var transformatedPro = Vector4f(Vector2f(transformadPro.x,transformadPro.y),-1f,0f)
+        val transformatedPro = Vector4f(Vector2f(transformadPro.x,transformadPro.y),-1f,0f)
         val invertedView = Matrix4f().invert(_camera.getCalculateViewMatrix())
-        var transformatedView = invertedView.transform(transformatedPro)
+        val transformatedView = invertedView.transform(transformatedPro)
         val worldray = Vector3f(transformatedView.x, transformatedView.y,transformatedView.z)
-        return worldray
+        return worldray*/
+        return view
+    }
+
+    private fun DoISeeThat(checklist:MutableList<Pillar>): Vector3f {
+        val whatISee = RayCastAtCenter()
+
+        var cords = Vector3f()
+
+        checklist.forEach { element ->
+            if (element.BlockObject.getPosition() == whatISee) {
+                cords = element.BlockObject.getPosition()
+                element.BlockObject.MeshList.forEach { it ->
+                    it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
+                }
+            } else if (element.PillarObject.getPosition() == whatISee) {
+                cords = element.PillarObject.getPosition()
+                element.PillarObject.MeshList.forEach { it ->
+                    it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
+                }
+            }
+        }
+        return cords
     }
 
     override fun OnScroll(xoffset: Double, yoffset: Double)
