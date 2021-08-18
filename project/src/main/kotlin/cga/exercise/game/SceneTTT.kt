@@ -311,12 +311,12 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         var cords = Vector3f()
 
         checklist.forEach { element ->
-            if (InBounds(whatISee,element.BlockObject.getWorldPosition(),5)) {
+            if (InBounds(whatISee,element.BlockObject.getWorldPosition(),Vector3i(2,10,2))) {
                 cords = element.BlockObject.getWorldPosition()
                 element.BlockObject.MeshList.forEach { it ->
                     it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
                 }
-            } else if (InBounds(whatISee, element.PillarObject.getWorldPosition(),5)) {
+            } else if (InBounds(whatISee, element.PillarObject.getWorldPosition(),Vector3i(2,10,2))) {
                 cords = element.PillarObject.getWorldPosition()
                 element.PillarObject.MeshList.forEach { it ->
                     it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
@@ -326,9 +326,9 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         return cords
     }
 
-    private fun InBounds(origin:Vector3f,target:Vector3f,range:Int):Boolean
+    private fun InBounds(origin:Vector3f,target:Vector3f,range:Vector3i):Boolean
     {
-        return ((origin.x<=target.x+range)&&(origin.x>=target.x-range))&&((origin.y<=target.y+range)&&(origin.y>=target.y-range))&&((origin.z<=target.z+range)&&(origin.z>=target.z-range))
+        return ((origin.x<=target.x+range.x)&&(origin.x>=target.x-range.x))&&((origin.y<=target.y+range.y)&&(origin.y>=target.y-range.y))&&((origin.z<=target.z+range.z)&&(origin.z>=target.z-range.z))
     }
 
     override fun OnScroll(xoffset: Double, yoffset: Double)
