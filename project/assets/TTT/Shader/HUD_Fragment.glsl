@@ -17,12 +17,12 @@ void main()
 {
     vec4 recolor = texture(textureEmissive, vertexData.TexturePosition);
 
-    if(recolor.xyz == vec3(1f, 1f, 1f))
+    if(recolor.xyz == vec3(1.0f, 1.0f, 1.0f))
     {
         discard;
     }
 
-    if(materialColor != vec3(1f, 1f, 1f))
+    if(materialColor != vec3(1.0f, 1.0f, 1.0f))
     {
         recolor = vec4(materialColor + recolor.xyz, recolor.w);
     }
