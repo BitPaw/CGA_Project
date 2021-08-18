@@ -237,6 +237,17 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
            // _camera.rotateLocal(roationVector)
             _camera.translateGlobal(movementVector)
         }
+
+        // needs to be adjusted works for now
+        if(window.getKeyState(GLFW.GLFW_KEY_Q))
+            if(((t/dt).toInt()%4)==0)
+            {
+                _camera.translateGlobal(Vector3f(movementspeed,0f,0f))
+            }
+            else
+            {
+                _camera.translateGlobal(Vector3f(-2*movementspeed,0f,0f))
+            }
     }
 
     override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
@@ -300,19 +311,24 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         var cords = Vector3f()
 
         checklist.forEach { element ->
-            if (element.BlockObject.getPosition() == whatISee) {
-                cords = element.BlockObject.getPosition()
+            if (InBounds(whatISee,element.BlockObject.getWorldPosition(),5)) {
+                cords = element.BlockObject.getWorldPosition()
                 element.BlockObject.MeshList.forEach { it ->
                     it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
                 }
-            } else if (element.PillarObject.getPosition() == whatISee) {
-                cords = element.PillarObject.getPosition()
+            } else if (InBounds(whatISee, element.PillarObject.getWorldPosition(),5)) {
+                cords = element.PillarObject.getWorldPosition()
                 element.PillarObject.MeshList.forEach { it ->
                     it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
                 }
             }
         }
         return cords
+    }
+
+    private fun InBounds(origin:Vector3f,target:Vector3f,range:Int):Boolean
+    {
+        return ((origin.x<=target.x+range)&&(origin.x>=target.x-range))&&((origin.y<=target.y+range)&&(origin.y>=target.y-range))&&((origin.z<=target.z+range)&&(origin.z>=target.z-range))
     }
 
     override fun OnScroll(xoffset: Double, yoffset: Double)
