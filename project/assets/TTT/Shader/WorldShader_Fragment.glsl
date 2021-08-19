@@ -18,9 +18,17 @@ void main()
 {
    // vec3 mixedColor = materialColor * vertexData.Normal;
 
-    vec4 texture = texture(textureEmissive, vertexData.TexturePosition);
+    vec4 textureColor;
 
+    if(materialColor == vec3(1f, 1f , 1f))
+    {
+        textureColor = texture(textureEmissive, vertexData.TexturePosition) * vec4(materialColor, 1.0f);
+    }
+    else
+    {
+        textureColor = texture(textureEmissive, vertexData.TexturePosition) + vec4(materialColor, 1.0f);
+    }
     //vec4 mixedColorX4 = mix(texture, vec4(mixedColor, 1.0f), 0.2f) * 5f;
 
-    ResultColor = texture;
+    ResultColor = textureColor;
 }

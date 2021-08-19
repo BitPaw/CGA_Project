@@ -20,3 +20,4 @@ Provisorisch: TTT
 
 # Bilder
 ![Image](./images/026.png)
+![Image](./images/027.png)

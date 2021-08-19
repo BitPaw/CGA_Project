@@ -26,7 +26,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val _game = TTTGame(this)
     private val _camera = TTTCamera(90f, window.windowWidth.toFloat()/window.windowHeight.toFloat())
 
-    private val cube =  ModelLoader.loadModel("assets/TTT/Model/Pillar.obj", 0f, toRadians(0f),0f)!!
+    private val _cube  =  ModelLoader.loadModel("assets/TTT/Model/Cube.obj", 0f, toRadians(0f),0f)!!
+    private val _pillar =  ModelLoader.loadModel("assets/TTT/Model/Pillar.obj", 0f, toRadians(0f),0f)!!
     private val _blockPlaceable = ModelLoader.loadModel("assets/TTT/Model/Placeable.obj", 0f, toRadians(0f),0f)!!
     private val rectangle = ModelLoader.loadModel("assets/TTT/Model/Recangle.obj", 0f, toRadians(0f),0f)!!
 
@@ -41,6 +42,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     private val mousePositionCurrent = Vector2d(0.0, 0.0)
     private val mousePositionDelta = Vector2d(0.0, 0.0)
+    private var _currnetPillar : Pillar? = null
     //------------------------------------------------------------------------------------------------------------------
 
     //-----<Map>--------------------------------------------------------------------------------------------------------
@@ -137,7 +139,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _positionCamera.TextSet("[N/A]")
 
 
-        cube.MeshList[0].material.emit = brickTexture
+        _pillar.MeshList[0].material.emit = brickTexture
 
         rectangle.translateLocal(Vector3f(-1f, -1f, -1f))
         rectangle.scaleLocal(0.3f);
@@ -152,6 +154,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         _cross.scaleLocal(00.1f)
         _cross.translateLocal(-0.5f, -0.5f, -2f)
+
     }
 
     //-----<Engine internal>--------------------------------------------------------------------------------------------
@@ -277,12 +280,15 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
             }
     }
 
+    var xxxxx = 0
+
     override fun onKey(key: Int, scancode: Int, action: Int, mode: Int)
     {
 
         if(GLFW.GLFW_PRESS == action) // OnPressDown
         {
             val field = Vector2i(-1, -1)
+
 
             when(key)
             {
@@ -296,6 +302,15 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
                 GLFW.GLFW_KEY_KP_8 -> field.set(1,2)
                 GLFW.GLFW_KEY_KP_9 -> field.set(2,2)
             }
+
+
+            /*
+            {
+                xxxxx = (xxxxx + 1) % 9
+
+                _cube.setPosition(_fieldList[xxxxx].HitBoxAncerPoint)
+                _cube.translateLocal(0f, 3.7f, 0f)
+            }*/
 
             if(field != Vector2i(-1, -1))
             {
@@ -317,46 +332,6 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         }
     }
 
-    private fun RayCastAtCenter() : Vector3f
-    {
-        val view = Vector3f()
-        _camera.getCalculateViewMatrix().getRow(2,view)
-        /*val clipcords = Vector4f(0f,0f,-1f,1f)
-        val invertedPro = Matrix4f().invert(_camera.getCalculateProjectionMatrix())
-        val transformadPro = invertedPro.transform(clipcords)
-        val transformatedPro = Vector4f(Vector2f(transformadPro.x,transformadPro.y),-1f,0f)
-        val invertedView = Matrix4f().invert(_camera.getCalculateViewMatrix())
-        val transformatedView = invertedView.transform(transformatedPro)
-        val worldray = Vector3f(transformatedView.x, transformatedView.y,transformatedView.z)
-        return worldray*/
-        return view
-    }
-
-    private fun DoISeeThat(checklist:MutableList<Pillar>): Vector3f {
-        val whatISee = RayCastAtCenter()
-
-        var cords = Vector3f()
-
-        checklist.forEach { element ->
-            if (InBounds(whatISee,element.BlockObject.getWorldPosition(),Vector3i(2,10,2))) {
-                cords = element.BlockObject.getWorldPosition()
-                element.BlockObject.MeshList.forEach { it ->
-                    it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
-                }
-            } else if (InBounds(whatISee, element.PillarObject.getWorldPosition(),Vector3i(2,10,2))) {
-                cords = element.PillarObject.getWorldPosition()
-                element.PillarObject.MeshList.forEach { it ->
-                    it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
-                }
-            }
-        }
-        return cords
-    }
-
-    private fun InBounds(origin:Vector3f,target:Vector3f,range:Vector3i):Boolean
-    {
-        return ((origin.x<=target.x+range.x)&&(origin.x>=target.x-range.x))&&((origin.y<=target.y+range.y)&&(origin.y>=target.y-range.y))&&((origin.z<=target.z+range.z)&&(origin.z>=target.z-range.z))
-    }
 
     override fun OnScroll(xoffset: Double, yoffset: Double)
     {
@@ -392,9 +367,29 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
             _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
         }
 
+
         //---<Element Select>-----
         TrySelectPillar()
         //------------------------
+    }
+
+    override fun onMouseButton(button: Int, action: Int, mode: Int)
+    {
+        if(GLFW.GLFW_PRESS == action) // OnPressDown
+        {
+            val isLeftClick = button == GLFW.GLFW_MOUSE_BUTTON_1
+
+            if(isLeftClick && _currnetPillar != null)
+            {
+                val x = _currnetPillar!!.Field.x
+                val y = _currnetPillar!!.Field.y
+
+                val playerMenu = GetCurrentPlayerMenu()
+                val gameField = GameField(x, y, _game.GetCurrentPlayerOnTurn(), playerMenu.CurrentlySelected)
+
+                _game.PlayerPlace(gameField)
+            }
+        }
     }
 
     override fun cleanup()
@@ -403,10 +398,16 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     }
 
     //------------------------------------------------------------------------------------------------------------------
-
     private fun OnPillarSelect(pillar: Pillar)
     {
-        pillar.PillarObject.MeshList[0].material.color.set(1f,1f,0f)
+        for(allpillar in _fieldList)
+        {
+            allpillar.Selected = false
+        }
+
+        _currnetPillar = pillar
+
+        pillar.Selected = true
 
         _lookAtTextTarget.TextSet("Selected : [${pillar.Field.x}|${pillar.Field.y}]")
     }
@@ -450,14 +451,20 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         {
             for (x in 0 until width)
             {
-                val newObject = Renderable(cube.MeshList)
+                val xPos = x.toFloat() * gapBetween - offset.x
+                val yPos = y.toFloat() * gapBetween - offset.y
+
+                val newObject = Renderable(_pillar.MeshList)
                 val newBlock =  Renderable(_blockPlaceable.MeshList)
-                val newPosition = Vector3f(x.toFloat() * gapBetween - offset.x, 0f, y.toFloat() * gapBetween - offset.y)
+                val newPosition = Vector3f(xPos, 0f, yPos)
                 val gameField = GameField(x, y)
 
                 val rr = Pillar(gameField, newObject,newBlock)
 
+                rr.HitBoxAncerPoint.set(xPos, 3.5f, yPos)
+
                 newObject.translateLocal(newPosition)
+
                 newBlock.translateLocal(newPosition)
                 newBlock.translateLocal(0f, 3.5f, 0f)
                 newBlock.rotateLocal(180f, 180f, 0f)
@@ -595,30 +602,51 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
         // 4D world coordinates
         val rayWorldCoordinatesMatrix = rayEye.mul(lookAtMatrix.invert())
-        val rayWorldCoordinates = Vector3f(rayWorldCoordinatesMatrix.x, rayWorldCoordinatesMatrix.y, rayWorldCoordinatesMatrix.z)
+        var rayWorldCoordinates = Vector3f(rayWorldCoordinatesMatrix.x, rayWorldCoordinatesMatrix.y, rayWorldCoordinatesMatrix.z)
 
         rayWorldCoordinates.normalize()
+
+
+
+
+
+
 
         val xString = "%4.1f".format(rayWorldCoordinates.x)
         val yString = "%4.1f".format(rayWorldCoordinates.y)
         val zString = "%4.1f".format(rayWorldCoordinates.z)
+        _lookAtTextPosition.TextSet("LookAt : <$xString|$yString|$zString>")
 
-        _lookAtTextPosition.TextSet("LookAT : <$xString|$yString|$zString>")
+        val positionCamera = Vector3f(_camera.getPosition())
+        val wtwfwtf =  Vector3f(positionCamera)
+
+        for(i in 0..6)
+        {
+            wtwfwtf.add(rayWorldCoordinates)
+        }
+
+        _cube.setPosition(wtwfwtf)
+
+        var hasHit = false
+
 
         for(element in _fieldList)
         {
-            val positionCamera = _camera.getPosition()
-            val position = element.PillarObject.getPosition()
-            val isNear = IntersectsRay(rayWorldCoordinates, positionCamera)
-            val hasHit = isNear != null
-            /*
+            val objectPosition = Vector3f(element.HitBoxAncerPoint)
+            val currentCheckPosition = Vector3f(positionCamera)
+            val range = 10
 
-            val offset = 0.5
+            for (i in 0 until range)
+            {
+                currentCheckPosition.add(rayWorldCoordinates)
 
-            val xOffset = Math.abs(position.x - rdsayWorldCoordinates.x)
-            val zOffset = Math.abs(position.z - rayWorldCoordinates.z)
+                hasHit = BoxCollider(currentCheckPosition, objectPosition, 0.5f)
 
-          val isNear = xOffset < offset && zOffset < offset*/
+                if(hasHit)
+                {
+                    break
+                }
+            }
 
             if(hasHit)
             {
@@ -626,6 +654,17 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
                 break
             }
         }
+    }
+
+    private fun BoxCollider(objectA : Vector3f, objectB : Vector3f, border : Float) : Boolean
+    {
+        val inX = Math.abs(objectA.x - objectB.x)
+        val inY = Math.abs(objectA.y - objectB.y) < 5
+        val inZ = Math.abs(objectA.z - objectB.z)
+
+        val isInBound = inX < border && inZ< border
+
+        return isInBound
     }
 
     private fun IntersectsRay(rayDirection : Vector3f, rayOrigin : Vector3f) : Float?
@@ -653,5 +692,58 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         {
             return distanceAlongRay - Math.sqrt(dist)
         }
+    }
+
+
+
+
+
+    private fun RayCastAtCenter() : Vector3f
+    {
+        val view = Vector3f()
+        _camera.getCalculateViewMatrix().getRow(2,view)
+        /*val clipcords = Vector4f(0f,0f,-1f,1f)
+        val invertedPro = Matrix4f().invert(_camera.getCalculateProjectionMatrix())
+        val transformadPro = invertedPro.transform(clipcords)
+        val transformatedPro = Vector4f(Vector2f(transformadPro.x,transformadPro.y),-1f,0f)
+        val invertedView = Matrix4f().invert(_camera.getCalculateViewMatrix())
+        val transformatedView = invertedView.transform(transformatedPro)
+        val worldray = Vector3f(transformatedView.x, transformatedView.y,transformatedView.z)
+        return worldray*/
+        return view
+    }
+
+    private fun DoISeeThat(checklist:MutableList<Pillar>): Vector3f {
+        val whatISee = RayCastAtCenter()
+
+        var cords = Vector3f()
+
+        checklist.forEach { element ->
+            if (InBounds(whatISee,element.BlockObject.getWorldPosition(),Vector3i(2,10,2))) {
+                cords = element.BlockObject.getWorldPosition()
+                element.BlockObject.MeshList.forEach { it ->
+                    it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
+                }
+            } else if (InBounds(whatISee, element.PillarObject.getWorldPosition(),Vector3i(2,10,2))) {
+                cords = element.PillarObject.getWorldPosition()
+                element.PillarObject.MeshList.forEach { it ->
+                    it.material.color = Vector3f(0.5f, 0.5f, 0.5f)
+                }
+            }
+        }
+        return cords
+    }
+
+    private fun InBounds(origin : Vector3f, target : Vector3f, range : Vector3i) : Boolean
+    {
+        return (
+                (origin.x <= target.x + range.x)
+                        &&
+                        (origin.x >= target.x - range.x)
+                )
+                &&
+                ((origin.y<=target.y+range.y)&&(origin.y>=target.y-range.y))
+                &&
+                ((origin.z<=target.z+range.z)&&(origin.z>=target.z-range.z))
     }
 }

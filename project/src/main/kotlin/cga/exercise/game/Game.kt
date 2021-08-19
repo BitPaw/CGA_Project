@@ -31,6 +31,11 @@ class Game(width: Int,
         scene.OnScroll(xoffset, yoffset)
     }
 
+    override fun onMouseButton(button: Int, action: Int, mode: Int)
+    {
+        scene.onMouseButton(button, action, mode)
+    }
+
     override fun onMouseMove(xpos: Double, ypos: Double) = scene.onMouseMove(xpos, ypos)
 
     override fun onKey(key: Int, scancode: Int, action: Int, mode: Int) = scene.onKey(key, scancode, action, mode)

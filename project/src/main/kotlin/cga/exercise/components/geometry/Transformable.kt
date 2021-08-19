@@ -176,6 +176,12 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
         return result
     }
 
+    fun setPosition(position: Vector3f)
+    {
+        val posi = Vector4f(position.x, position.y, position.z, 1f)
+        modelMatrix.setColumn(3, posi)
+    }
+
     /**
      * Returns position based on aggregated translations incl. parents.
      * Hint: last column of world model matrix

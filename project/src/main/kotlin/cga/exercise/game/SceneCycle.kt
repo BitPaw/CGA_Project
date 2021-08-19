@@ -171,5 +171,10 @@ class SceneCycle(private val window: GameWindow) : Scene
         tronCamera.rotateAroundPoint(0f, difference.x.toFloat(), 0f, lightCycle.getWorldPosition())
     }
 
+    override fun onMouseButton(button: Int, action: Int, mode: Int)
+    {
+        // TODO("Not yet implemented")
+    }
+
     override  fun cleanup() {}
 }
