@@ -8,7 +8,6 @@ import Resource.Text
 import TTT.*
 import TTT.Event.*
 import cga.exercise.components.camera.TTTCamera
-import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
@@ -57,13 +56,16 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         "assets/TTT/Texture/SkyBox/Front.png"
     )
 
-    private val fieldList = mutableListOf<Pillar>()
+    private val _fieldList = mutableListOf<Pillar>()
     //------------------------------------------------------------------------------------------------------------------
 
     //-----<UI>---------------------------------------------------------------------------------------------------------
     private val _font = SpriteFont("assets/TTT/Font/segoe.fnt")
     private val _score = Text()
     private val _currentTurn = Text()
+    private val _positionCamera = Text()
+    private val _lookAtTextPosition = Text()
+    private val _lookAtTextTarget = Text()
     //------------------------------------------------------------------------------------------------------------------
 
     //-----<Menu>----------------------------------------------------------------------------------------------
@@ -119,6 +121,21 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _currentTurn.FontSet(_font)
         _currentTurn.TextSet("Turn:")
 
+        _lookAtTextPosition.translateLocal(-0.65f, 0.5f, -1f)
+        _lookAtTextPosition.scaleLocal(0.5f)
+        _lookAtTextPosition.FontSet(_font)
+        _lookAtTextPosition.TextSet("[N/A]")
+
+        _lookAtTextTarget.translateLocal(-0.65f, 0.4f, -1f)
+        _lookAtTextTarget.scaleLocal(0.5f)
+        _lookAtTextTarget.FontSet(_font)
+        _lookAtTextTarget.TextSet("[N/A]")
+
+        _positionCamera.translateLocal(-0.65f, 0.3f, -1f)
+        _positionCamera.scaleLocal(0.5f)
+        _positionCamera.FontSet(_font)
+        _positionCamera.TextSet("[N/A]")
+
 
         cube.MeshList[0].material.emit = brickTexture
 
@@ -165,7 +182,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _camera.IgnoreTranslation = false
         _camera.bind(shaderWorld)
 
-        fieldList.forEach{element ->
+        _fieldList.forEach{element ->
             val texture = TextureLookUp(element.Field.Symbol, element.Field.Strength)
 
             element.Render(shaderWorld, texture)
@@ -185,9 +202,12 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _currentTurn.render(shaderHUD)
         _playerMenuLeft.Render(shaderHUD)
         _playerMenuRight.Render(shaderHUD)
+        _lookAtTextPosition.render(shaderHUD)
+        _lookAtTextTarget.render(shaderHUD)
+        _positionCamera.render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
 
-        println(DoISeeThat(fieldList))
+        //println(DoISeeThat(_fieldList))
     }
 
     override fun update(dt: Float, t: Float)
@@ -237,6 +257,13 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
            // _camera.rotateLocal(roationVector)
             _camera.translateGlobal(movementVector)
         }
+
+
+        val cameraPosition = _camera.getPosition()
+        val xString = "%4.1f".format(cameraPosition.x)
+        val yString = "%4.1f".format(cameraPosition.y)
+        val zString = "%4.1f".format(cameraPosition.z)
+        _positionCamera.TextSet("CamPos : <$xString|$yString|$zString>")
 
         // needs to be adjusted works for now
         if(window.getKeyState(GLFW.GLFW_KEY_Q))
@@ -364,6 +391,10 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
             _camera.rotateLocalCappedYZ(viewMoveVector.y, viewMoveVector.x, 0f)
         }
+
+        //---<Element Select>-----
+        TrySelectPillar()
+        //------------------------
     }
 
     override fun cleanup()
@@ -372,6 +403,13 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     }
 
     //------------------------------------------------------------------------------------------------------------------
+
+    private fun OnPillarSelect(pillar: Pillar)
+    {
+        pillar.PillarObject.MeshList[0].material.color.set(1f,1f,0f)
+
+        _lookAtTextTarget.TextSet("Selected : [${pillar.Field.x}|${pillar.Field.y}]")
+    }
 
     //-----<Game Events>------------------------------------------------------------------------------------------------
 
@@ -392,7 +430,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _playerMenuLeft.ElementResetAll()
         _playerMenuRight.ElementResetAll()
 
-        fieldList.forEach{element -> element.Field.Reset() }
+        _fieldList.forEach{element -> element.Field.Reset() }
     }
 
     override fun OnRoundEnd(roundEndEvent: RoundEndEvent)
@@ -424,7 +462,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
                 newBlock.translateLocal(0f, 3.5f, 0f)
                 newBlock.rotateLocal(180f, 180f, 0f)
 
-                fieldList.add(rr)
+                _fieldList.add(rr)
             }
         }
         //------------------------------------------------------------------------------------------------------------------
@@ -511,8 +549,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     {
         val index = gameField.x + (gameField.y * 3)
 
-        fieldList[index].Field.Symbol = gameField.Symbol
-        fieldList[index].Field.Strength = gameField.Strength
+        _fieldList[index].Field.Symbol = gameField.Symbol
+        _fieldList[index].Field.Strength = gameField.Strength
 
         when(gameField.Symbol)
         {
@@ -524,4 +562,96 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     //------------------------------------------------------------------------------------------------------------------
 
+
+    private fun TrySelectPillar()
+    {
+        _camera.ThirdDimension = true
+
+        val lookAtMatrix = _camera.getLookAtMatrix()
+        //val viewMatrix = _camera.getCalculateViewMatrix()
+        val projectioNmatrix = _camera.getCalculateProjectionMatrix()
+
+
+        // heavily influenced by: http://antongerdelan.net/opengl/raycasting.html
+        // viewport coordinate system
+        // normalized device coordinates
+        val x = 2f * mousePositionCurrent.x / window.windowWidth - 1f
+        val y = 1f - 2f * mousePositionCurrent.y / window.windowHeight
+        val z = 1f
+        val rayNormalizedDeviceCoordinates = Vector3f(x.toFloat(), y.toFloat(), z)
+
+        // 4D homogeneous clip coordinates
+
+        // 4D homogeneous clip coordinates
+        val rayClip = Vector4f(rayNormalizedDeviceCoordinates.x, rayNormalizedDeviceCoordinates.y, -1f, 1f)
+
+
+        // 4D eye (camera) coordinates
+        var rayEye = Vector4f()
+
+        rayClip.mul(projectioNmatrix.invert())
+
+        rayEye = Vector4f(rayEye.x, rayEye.y, -1f, 0f)
+
+        // 4D world coordinates
+        val rayWorldCoordinatesMatrix = rayEye.mul(lookAtMatrix.invert())
+        val rayWorldCoordinates = Vector3f(rayWorldCoordinatesMatrix.x, rayWorldCoordinatesMatrix.y, rayWorldCoordinatesMatrix.z)
+
+        rayWorldCoordinates.normalize()
+
+        val xString = "%4.1f".format(rayWorldCoordinates.x)
+        val yString = "%4.1f".format(rayWorldCoordinates.y)
+        val zString = "%4.1f".format(rayWorldCoordinates.z)
+
+        _lookAtTextPosition.TextSet("LookAT : <$xString|$yString|$zString>")
+
+        for(element in _fieldList)
+        {
+            val positionCamera = _camera.getPosition()
+            val position = element.PillarObject.getPosition()
+            val isNear = IntersectsRay(rayWorldCoordinates, positionCamera)
+            val hasHit = isNear != null
+            /*
+
+            val offset = 0.5
+
+            val xOffset = Math.abs(position.x - rdsayWorldCoordinates.x)
+            val zOffset = Math.abs(position.z - rayWorldCoordinates.z)
+
+          val isNear = xOffset < offset && zOffset < offset*/
+
+            if(hasHit)
+            {
+                OnPillarSelect(element)
+                break
+            }
+        }
+    }
+
+    private fun IntersectsRay(rayDirection : Vector3f, rayOrigin : Vector3f) : Float?
+    {
+        var radius = 0.5f;
+        var difference = rayOrigin.sub(rayDirection)
+        var differenceLengthSquared = difference.lengthSquared()
+        var sphereRadiusSquared = radius * radius;
+        if (differenceLengthSquared < sphereRadiusSquared)
+        {
+            return 0.0f
+        }
+        var distanceAlongRay = rayDirection.dot(difference)
+        if (distanceAlongRay < 0)
+        {
+            return null;
+        }
+        var dist = sphereRadiusSquared + distanceAlongRay * distanceAlongRay - differenceLengthSquared
+
+        if(dist < 0)
+        {
+            return null
+        }
+        else
+        {
+            return distanceAlongRay - Math.sqrt(dist)
+        }
+    }
 }

@@ -11,11 +11,18 @@ class TTTCamera(var fieldofView : Float = 45f, var aspectRatio: Float = 16f/9f, 
     var ThirdDimension = true
     var IgnoreTranslation = false
 
+    fun getLookAtMatrix() : Matrix4f
+    {
+        val lookAt = Matrix4f()
+
+        lookAt.lookAt(getWorldPosition(),getWorldPosition().sub(getWorldZAxis()), getWorldYAxis())
+
+        return lookAt
+    }
+
     override fun getCalculateViewMatrix(): Matrix4f
     {
-        var view = Matrix4f()
-
-        view.lookAt(getWorldPosition(),getWorldPosition().sub(getWorldZAxis()), getWorldYAxis())
+        var view = getLookAtMatrix()
 
         if(IgnoreTranslation)
         {

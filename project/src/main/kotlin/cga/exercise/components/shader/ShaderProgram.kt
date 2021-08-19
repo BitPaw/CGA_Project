@@ -12,7 +12,10 @@ import java.nio.file.Paths
 /**
  * Created by Fabian on 16.09.2017.
  */
-class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
+class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String)
+{
+    private val _debugOutPut = false
+
     private var programID: Int = 0
     //Matrix buffers for setting matrix uniforms. Prevents allocation for each uniform
     private val m4x4buf: FloatBuffer = BufferUtils.createFloatBuffer(16)
@@ -52,9 +55,10 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             GL20.glUniform1f(loc, value)
             return true
         }
-
-        println("[Shader][Error] Could not set uniform Float <$name>")
-
+        if(_debugOutPut)
+        {
+            println("[Shader][Error] Could not set uniform Float <$name>")
+        }
         return false
     }
 
@@ -71,7 +75,10 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             return true
         }
 
-        println("[Shader][Error] Could not set uniform vector3D <$name>")
+        if(_debugOutPut)
+        {
+            println("[Shader][Error] Could not set uniform vector3D <$name>")
+        }
 
         return false
     }
@@ -89,8 +96,10 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             return true
         }
 
-        println("[Shader][Error] Could not set Unifrom vector2D <$name>")
-
+        if(_debugOutPut)
+        {
+            println("[Shader][Error] Could not set Unifrom vector2D <$name>")
+        }
         return false
     }
 
@@ -106,9 +115,10 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             GL20.glUniform1i(loc,value)
             return true
         }
-
-        println("[Shader][Error] Could not set uniform Texture <$name>")
-
+        if(_debugOutPut)
+        {
+            println("[Shader][Error] Could not set uniform Texture <$name>")
+        }
         return false
     }
 
@@ -128,9 +138,10 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
             GL20.glUniformMatrix4fv(loc, transpose, matrixData)
             return true
         }
-
-        println("[Shader][Error] Could not set uniform Matrix4x4 <$name>")
-
+        if(_debugOutPut)
+        {
+            println("[Shader][Error] Could not set uniform Matrix4x4 <$name>")
+        }
         return false
     }
 

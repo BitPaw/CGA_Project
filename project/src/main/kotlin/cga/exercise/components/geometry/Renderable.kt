@@ -13,15 +13,4 @@ open class Renderable(val MeshList : MutableList<Mesh> = mutableListOf(), modelM
 
         MeshList.forEach{mesh -> mesh.render(shaderProgram) }
     }
-
-    fun addToMeshList(addableMeshList : List<Mesh>)
-    {
-        addableMeshList.forEach { item -> MeshList.add(item) }
-    }
-
-    // Clear all data and unregister!
-    fun Reset()
-    {
-
-    }
 }
