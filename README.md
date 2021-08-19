@@ -15,10 +15,8 @@ Provisorisch: TTT
 | EventSystem | Lukas Momberg |
 | SpriteFont(.FNT) Support | Lukas Momberg |
 | Game Rules | Jona Siebel |
-| Raycasting research | Jona Siebel |
+| Raycast (Object Select) | Jona Siebel |
 | Modellierung | Nico Brenner |
 
 # Bilder
-![Image](./images/005.png)
-![Image](./images/006.png)
-![Image](./images/008.png)
+![Image](./images/026.png)
