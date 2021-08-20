@@ -68,6 +68,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     private val _positionCamera = Text()
     private val _lookAtTextPosition = Text()
     private val _lookAtTextTarget = Text()
+    private val _centerText = Text()
     //------------------------------------------------------------------------------------------------------------------
 
     //-----<Menu>----------------------------------------------------------------------------------------------
@@ -138,6 +139,9 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _positionCamera.FontSet(_font)
         _positionCamera.TextSet("[N/A]")
 
+        _centerText.translateLocal(-0.25f, 0f, -1f)
+        _centerText.scaleLocal(1.0f)
+        _centerText.FontSet(_font)
 
         _pillar.MeshList[0].material.emit = brickTexture
 
@@ -208,9 +212,8 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         _lookAtTextPosition.render(shaderHUD)
         _lookAtTextTarget.render(shaderHUD)
         _positionCamera.render(shaderHUD)
+        _centerText.render(shaderHUD)
         //--------------------------------------------------------------------------------------------------------------
-
-        //println(DoISeeThat(_fieldList))
     }
 
     override fun update(dt: Float, t: Float)
@@ -426,6 +429,7 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
 
     override fun OnRoundBegin()
     {
+        _centerText.TextSet("")
         _score.TextSet("Move: New Round")
 
         _playerMenuLeft.ElementResetAll()
@@ -441,13 +445,11 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
         if(roundEndEvent.RoundResult==RoundResult.WinInARaw)
         {
             //todo feel spezial
-            println(roundEndEvent.AffectedFields[0].Symbol.toString()+" won the Game")
-            _score.TextSet(roundEndEvent.AffectedFields[0].Symbol.toString()+" won the Game")
+            _centerText.TextSet(roundEndEvent.AffectedFields[0].Symbol.toString()+" won the Game")
         }
         else if(roundEndEvent.RoundResult==RoundResult.Draw)
         {
-            println("It`s a Draw")
-            _score.TextSet("It`s a Draw")
+            _centerText.TextSet("It`s a Draw")
         }
     }
 
