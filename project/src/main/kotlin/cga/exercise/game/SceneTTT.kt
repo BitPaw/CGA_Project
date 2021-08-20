@@ -437,6 +437,18 @@ class SceneTTT(private val window: GameWindow) : Scene, TTTGameListener
     override fun OnRoundEnd(roundEndEvent: RoundEndEvent)
     {
         _score.TextSet(roundEndEvent.RoundResult.toString())
+
+        if(roundEndEvent.RoundResult==RoundResult.WinInARaw)
+        {
+            //todo feel spezial
+            println(roundEndEvent.AffectedFields[0].Symbol.toString()+" won the Game")
+            _score.TextSet(roundEndEvent.AffectedFields[0].Symbol.toString()+" won the Game")
+        }
+        else if(roundEndEvent.RoundResult==RoundResult.Draw)
+        {
+            println("It`s a Draw")
+            _score.TextSet("It`s a Draw")
+        }
     }
 
     override fun OnMatchBegin(width : Int, height : Int)
